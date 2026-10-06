@@ -21,6 +21,31 @@ const $ = s=>document.querySelector(s);
 const money = n=>n+"₽";
 const byId = id=>PRODUCTS.find(p=>p.id===id);
 const catEmoji = c=>({liquids:"🧪",pods:"🔌",disposable:"💨",cartridges:"♻️",snus:"📦"}[c]||"•");
+// подбор hex-цвета для кружка: русский из COLOR_HEX, английский — по ключевым словам
+function enSwatch(c){
+  const s = c.toLowerCase();
+  const map = [
+    ["black","#2A2A2E"],["white","#F2F2F6"],["pearl","#F6F0E4"],["ivory","#F4EFE4"],["opal","#F1ECEF"],
+    ["crystal","#D8E8F4"],["marble","#DEDBD4"],["nacre","#E8DCF0"],["silver","#C9CCD4"],
+    ["steel","#9AA3AE"],["slate","#5E6673"],["carbon","#3A3D45"],["ink","#1E2126"],
+    ["gray","#8B8B8F"],["grey","#8B8B8F"],["mist","#9AA0AD"],
+    ["teal","#3BA9A0"],["azure","#4FA8E0"],["cyan","#4FD0E0"],["blue","#5BB8E8"],
+    ["jade","#3EA98B"],["mint","#7FD9C2"],["lime","#A6D350"],["emerald","#2F9E6E"],
+    ["malachite","#1E9E6E"],["jungle","#2E7D4F"],["forest","#2C6B3E"],["green","#3E9B57"],
+    ["coral","#F0745A"],["cherry","#C22E3A"],["blaze","#E8503F"],["rose","#E8636F"],
+    ["crimson","#B3242E"],["red","#D64545"],
+    ["pink","#F29AB8"],["plume","#E8B4C6"],["flamingo","#F08B9E"],
+    ["lavender","#B79CE8"],["iris","#7C6FD6"],["violet","#8A63C9"],["grape","#7A4FA8"],
+    ["prism","#B48FD6"],["purple","#9B6DD9"],
+    ["canyon","#D8733A"],["retro","#E08A52"],["orange","#E8873A"],
+    ["gold","#E0B038"],["lemon","#E8D350"],["lightning","#E8C84A"],["yellow","#E8C34A"],
+    ["leather","#A06B3F"],["wood","#9A7B4F"],["chocolate","#6E4A2E"],["brown","#8B5E3C"],
+    ["neon","#B44AE8"],["vitality","#4AC85A"],["prism","#B48FD6"]
+  ];
+  for(const [word,hex] of map){ if(s.includes(word)) return hex; }
+  let h=0; for(const ch of s) h=(h*31+ch.codePointAt(0))%360;
+  return `hsl(${h},40%,55%)`;
+}
 const itemKey = (p,fl,col)=>`${p.id}||${fl||""}||${col||""}`;
 function parseKey(k){ const [id,fl,col]=k.split("||"); return {id,fl,col}; }
 // цена товара с учётом выбранного вкуса (у части вкусов своя цена)
@@ -79,7 +104,7 @@ function renderGrid(){
   $("#count").textContent = `Позиций: ${list.length} • ${SHOP.name} • оплата вручную через ${SHOP.manager}`;
   $("#grid").innerHTML = list.map(p=>`
     <div class="card" data-detail="${p.id}" role="button" tabindex="0">
-      <div class="ph ph-${p.cat}">${catEmoji(p.cat)}</div>
+      ${p.photo?`<img class="ph" src="${p.photo}" alt="${p.name}" loading="lazy">`:`<div class="ph ph-${p.cat}">${catEmoji(p.cat)}</div>`}
       <div class="b">
         <div class="brand">${p.brand}${p.line?" • "+p.line:""}</div>
         <div class="name">${p.name}</div>
@@ -106,17 +131,18 @@ function openDetail(id){
 function renderDetail(){
   const p = byId(det.pid); if(!p) return;
   const fSel = det.flavor, cSel = det.color;
-  const swatch = c=> COLOR_HEX[c] || (()=>{let h=0;for(const ch of c)h=(h*31+ch.codePointAt(0))%360;return `hsl(${h},40%,55%)`;})();
+  const swatch = c=> COLOR_HEX[c] || enSwatch(c);
   const needFlavor = !!p.flavors?.length, needColor = !!p.colors?.length;
   const ready = (!needFlavor || fSel) && (!needColor || cSel);
   const price = priceOf(p, fSel) * det.qty;
-  let html = `<h3>${catEmoji(p.cat)} ${p.name}</h3>`;
+  let html = p.photo?`<img class="det-ph" src="${p.photo}" alt="${p.name}">`:"";
+  html += `<h3>${catEmoji(p.cat)} ${p.name}</h3>`;
   html += `<p class="small">${p.desc||""}</p>`;
   html += `<div class="row"><span>Бренд</span><b>${p.brand}</b></div>`;
   if(p.strengthLabel!=="—") html += `<div class="row"><span>Крепость</span><b>${p.strengthLabel}</b></div>`;
   if(p.volume!=="—") html += `<div class="row"><span>Объём</span><b>${p.volume}</b></div>`;
   if(needFlavor){
-    html += `<h4>Вкус${p.flavors.some(f=>f.price&&f.price!==p.price)?" (цена может отличаться)":""}</h4>`;
+    html += `<h4>${p.vlabel||"Вкус"}${p.flavors.some(f=>f.price&&f.price!==p.price)?" (цена может отличаться)":""}</h4>`;
     html += `<div class="chips">${p.flavors.map(f=>
       `<button class="chip ${f.name===fSel?"on":""}" data-flavor="${f.name}">${f.name}${f.desc?'<br><small class="tiny">'+f.desc+'</small>':''}${f.price?` <small class="tiny">${money(f.price)}</small>`:""}</button>`
     ).join("")}</div>`;
@@ -131,7 +157,7 @@ function renderDetail(){
   html += `<div class="row"><span>Итого</span><b id="detPrice">${money(price)}</b></div>`;
   if(p.cat==="pods") html += `<div class="promo">🎁 Скидка на жидкость <b>−50%</b> при оформлении заказа вместе с подом</div>`;
   const btnText = !ready
-    ? (needFlavor && !fSel ? "Сначала выбери вкус" : "Сначала выбери цвет")
+    ? (needFlavor && !fSel ? "Сначала выбери "+(p.vlabel||"вкус").toLowerCase() : "Сначала выбери цвет")
     : `В корзину • ${money(price)}`;
   html += `<button class="btn gold" id="detAdd" style="width:100%;margin-top:10px" ${ready?"":"disabled"}>${btnText}</button>`;
   $("#sheetIn").innerHTML = html;

@@ -1,108 +1,215 @@
-/* VapeOasis — каталог: базовые товары с вложенными вариантами (вкус/цвет).
+/* VapeOasis — каталог по ассортименту канала t.me/iVapeOasisAbkn (пост 27.08.2026).
    Карточка товара -> детальный экран -> выбор вкуса/цвета -> в корзину. */
 const PRODUCTS = [
   // ---- ЖИДКОСТИ: вкусы внутри базового товара ----
   {id:"bjorn", cat:"liquids", brand:"Bjorn", line:"Темный Хор",
-   name:"Bjorn Темный Хор", desc:"Солевая жидкость 30ml, 80mg. Линейка «Темный Хор».",
-   price:690, strength:"extra", strengthLabel:"Extra Hard 8%", volume:"30ml",
+   name:"Bjorn Темный Хор", desc:"Солевая жидкость 30мл, 80мг. Линейка «Темный Хор».",
+   price:550, strength:"extra", strengthLabel:"Extra Hard 8%", volume:"30ml", photo:"img/bjorn.jpg",
    flavors:[
      {name:"Арбуз мята"}, {name:"Клубника мята"}, {name:"Лимон лайм"},
      {name:"Мятная жвачка"}, {name:"Чистая мята"}, {name:"Эвкалипт мята"},
      {name:"Ягоды мята"}
    ]},
-  {id:"fox", cat:"liquids", brand:"Ice Fox", line:"Premium",
-   name:"Ice Fox Premium", desc:"Премиум линейка, 20mg, 30ml.",
-   price:650, strength:"medium", strengthLabel:"Medium 2%", volume:"30ml",
+  {id:"fox", cat:"liquids", brand:"Ice Fox by Iceberg", line:"Premium",
+   name:"Ice Fox by Iceberg", desc:"Премиум линейка 30мл, 20мг.",
+   price:600, strength:"medium", strengthLabel:"Medium 2%", volume:"30ml", photo:"img/fox.jpg",
    flavors:[
      {name:"Земляничный мохито"}, {name:"Кислая чёрная смородина"},
-     {name:"Кислая малина лимон"}, {name:"Малина с арбузом"},
-     {name:"Малина с фантой"}, {name:"Клубника земляника"},
-     {name:"Мармеладные ягоды"}, {name:"Фанта голубая малина"},
-     {name:"Черничные червяки"}, {name:"Чёрный виноград"}
+     {name:"Кислая малина лимон"}, {name:"Кислая малина с арбузом"},
+     {name:"Кислая малина с фантой"}, {name:"Кислые ленточки клубника земляника"},
+     {name:"Кислые мармеладные ягоды"}, {name:"Фанта с голубой малиной"},
+     {name:"Чернично-земляничные червяки"}, {name:"Чёрный виноград"}
    ]},
   {id:"pr", cat:"liquids", brand:"Пошлая Рабыня", line:"Extra Hard",
-   name:"Пошлая Рабыня", desc:"Дерзкая линейка, 80mg, 30ml.",
-   price:690, strength:"extra", strengthLabel:"Extra Hard 8%", volume:"30ml",
+   name:"Пошлая Рабыня", desc:"Солевая 30мл, 80мг. От 3 штук — 350₽/шт.",
+   price:400, strength:"extra", strengthLabel:"Extra Hard 8%", volume:"30ml", photo:"img/pr.jpg",
    flavors:[
      {name:"Ягодная содовая"}, {name:"Ананасовый сок"}, {name:"Мультифрукт"},
      {name:"Цитрусовый микс"}, {name:"Клюквенный морс"},
      {name:"Апельсин виноград"}, {name:"Кока-кола с ванилью"}
    ]},
+  {id:"flav", cat:"liquids", brand:"FLAV", line:"Medium",
+   name:"FLAV", desc:"Солевая жидкость 30мл, 20мг (Medium 2%).",
+   price:400, strength:"medium", strengthLabel:"Medium 2%", volume:"30ml", photo:"img/flav.jpg",
+   flavors:[
+     {name:"Грейпфрут вишня"}, {name:"Кола вишня"}, {name:"Манго персик"},
+     {name:"Тропическое манго"}, {name:"Черника арбуз"}
+   ]},
+  {id:"kil", cat:"liquids", brand:"Кислая Убивашка", line:"Extra Hard",
+   name:"Кислая Убивашка", desc:"Солевая жидкость 30мл, 90мг (Extra Hard 9%).",
+   price:550, strength:"extra", strengthLabel:"Extra Hard 9%", volume:"30ml", photo:"img/kil.jpg"},
+  {id:"lab", cat:"liquids", brand:"Злая Лабубу", line:"Energy",
+   name:"Злая Лабубу Energy", desc:"Солевая жидкость 30мл, 70мг (Extra Hard 7%).",
+   price:500, strength:"extra", strengthLabel:"Extra Hard 7%", volume:"30ml", photo:"img/lab.jpg"},
 
   // ---- ПОДЫ / ДЕВАЙСЫ: выбор цвета корпуса ----
-  {id:"dev1", cat:"pods", brand:"Geekvape", name:"Aegis Legend 5 Kit 200W", price:6490, strength:"-", strengthLabel:"—", volume:"—",
-   desc:"Флагманский боксмод 200W, влагозащита.",
-   colors:["Чёрный","Серый","Камуфляж"]},
-  {id:"dev2", cat:"pods", brand:"Vaporesso", name:"Vaporesso XROS 6", price:2990, strength:"-", strengthLabel:"—", volume:"—",
-   desc:"Под-система, экран, регулировка затяжки.",
-   colors:["Чёрный","Серебристый","Мятный","Голубой","Розовый"]},
-  {id:"dev3", cat:"pods", brand:"Vaporesso", name:"Vaporesso XROS 5", price:2790, strength:"-", strengthLabel:"—", volume:"—",
-   desc:"Хит продаж, вкус и автономность.",
-   colors:["Чёрный","Серебристый","Голубой","Розовый"]},
-  {id:"dev4", cat:"pods", brand:"Vaporesso", name:"Vaporesso XROS 6 Mini", price:2490, strength:"-", strengthLabel:"—", volume:"—",
-   desc:"Компактная версия XROS 6.",
-   colors:["Чёрный","Голубой","Розовый"]},
-  {id:"dev5", cat:"pods", brand:"Vaporesso", name:"Vaporesso XROS 5 Mini", price:2290, strength:"-", strengthLabel:"—", volume:"—",
-   desc:"Мини-формат, тот же вкус.",
-   colors:["Чёрный","Серебристый","Голубой"]},
-  {id:"dev6", cat:"pods", brand:"Vaporesso", name:"Vaporesso XROS 5 Nano", price:2690, strength:"-", strengthLabel:"—", volume:"—",
-   desc:"Nano-формат с экраном.",
-   colors:["Чёрный","Серебристый","Розовый"]},
-  {id:"dev7", cat:"pods", brand:"Vaporesso", name:"Vaporesso XROS Mini", price:1990, strength:"-", strengthLabel:"—", volume:"—",
-   desc:"Базовый мини-под.",
-   colors:["Чёрный","Серебристый"]},
-  {id:"dev8", cat:"pods", brand:"Geekvape", name:"Aegis HERO 2", price:3490, strength:"-", strengthLabel:"—", volume:"—",
-   desc:"Компактный подмод, защита IP67.",
-   colors:["Чёрный","Серый","Зелёный"]},
-  {id:"dev9", cat:"pods", brand:"Geekvape", name:"Aegis HERO 5 Classic", price:3990, strength:"-", strengthLabel:"—", volume:"—",
-   desc:"Новое поколение HERO.",
-   colors:["Чёрный","Серебристый","Зелёный"]},
-  {id:"dev10", cat:"pods", brand:"Geekvape", name:"HERO 5 Racing Edition", price:4190, strength:"-", strengthLabel:"—", volume:"—",
-   desc:"Гоночная лимитка.",
-   colors:["Чёрный","Красный","Жёлтый"]},
-  {id:"dev11", cat:"pods", brand:"Geekvape", name:"Aegis Hero Q", price:2890, strength:"-", strengthLabel:"—", volume:"—",
-   desc:"Лёгкий Q-формат.",
-   colors:["Чёрный","Голубой","Розовый"]},
-  {id:"dev12", cat:"pods", brand:"Smoant", name:"Smoant Pasito 2", price:3290, strength:"-", strengthLabel:"—", volume:"—",
-   desc:"Легенда Pasito, RBA-база.",
-   colors:["Чёрный","Серебристый"]},
-  {id:"dev13", cat:"pods", brand:"Geekvape", name:"Aegis Force", price:4590, strength:"-", strengthLabel:"—", volume:"—",
-   desc:"Новинка Force.",
-   colors:["Чёрный","Серый"]},
-  {id:"dev14", cat:"pods", brand:"Geekvape", name:"Aegis Boost PRO 2", price:4990, strength:"-", strengthLabel:"—", volume:"—",
-   desc:"PRO 2, мощность и вкус.",
-   colors:["Чёрный","Серый"]},
-  {id:"dev15", cat:"pods", brand:"Geekvape", name:"Aegis Boost 3", price:4690, strength:"-", strengthLabel:"—", volume:"—",
-   desc:"Третье поколение Boost.",
-   colors:["Чёрный","Зелёный"]},
+  {id:"dev1", cat:"pods", brand:"Geekvape", name:"Aegis Legend 5 Kit 200W", price:4990, strength:"-", strengthLabel:"—", volume:"—",
+   desc:"Боксмод 200W. Комплект: бак Z Sub-Ohm, 2 испарителя, доп. стекло, 2×18650, провод.",
+   photo:"img/dev1.jpg",
+   colors:["Glacier Green","Twilight Blue"]},
+  {id:"dev2", cat:"pods", brand:"Vaporesso", name:"Vaporesso XROS 6", price:2690, strength:"-", strengthLabel:"—", volume:"—",
+   desc:"Под-система: 2 картриджа, провод, документация.",
+   photo:"img/dev2.jpg",
+   colors:["Aurora Blue","Cosmic Black","Pearl White","Silk Brown","Silk Gray","Silk Green","Slate Black","Abyssal Blue","Carbon Fiber Gray","Dreamy Pink"]},
+  {id:"dev3", cat:"pods", brand:"Vaporesso", name:"Vaporesso XROS 5", price:2200, strength:"-", strengthLabel:"—", volume:"—",
+   desc:"Хит продаж: 2 картриджа, провод, документация.",
+   photo:"img/dev3.jpg",
+   colors:["Carbon Stripes","Blue Silk","Coral Red","Grey Silk","Jade Green","Lavender Purple","Opal White","Violet Silk"]},
+  {id:"dev4", cat:"pods", brand:"Vaporesso", name:"Vaporesso XROS 6 Mini", price:2090, strength:"-", strengthLabel:"—", volume:"—",
+   desc:"Компактная версия XROS 6: картридж, документация.",
+   photo:"img/dev4.jpg",
+   colors:["Brown","Jelly Pink","Plume White","Titanium Black","Titanium Silver","Black","Jelly Blue","Jelly Green","Jelly Orange","Plume Pink"]},
+  {id:"dev5", cat:"pods", brand:"Vaporesso", name:"Vaporesso XROS 5 Mini", price:1790, strength:"-", strengthLabel:"—", volume:"—",
+   desc:"Мини-формат: картридж, провод, документация.",
+   photo:"img/dev5.jpg",
+   colors:["Cool Black","Cool Pink","Mist Black","Mist White","Retro Orange","Retro Pink","Black","Sky Blue","Titanium Silver","Purple","Flowing Blue","Rose Red","Flowing Pink","Flowing Green","Pastel Crystal","Carbon Black"]},
+  {id:"dev6", cat:"pods", brand:"Vaporesso", name:"Vaporesso XROS 5 Nano", price:2500, strength:"-", strengthLabel:"—", volume:"—",
+   desc:"Nano-формат: 2 картриджа, ланьярд, провод, документация.",
+   photo:"img/dev6.jpg",
+   colors:["Blue Leatherette","Black Satin","Color Burst","Damascus Pink","Damascus Silver","Nacre","Orange Leatherette","Yellow Satin"]},
+  {id:"dev7", cat:"pods", brand:"Vaporesso", name:"Vaporesso XROS Mini", price:1400, strength:"-", strengthLabel:"—", volume:"—",
+   desc:"Базовый мини-под: картридж, провод, документация.",
+   photo:"img/dev7.jpg",
+   colors:["Orange Red","Cherry Red","Grape Purple","Violet","Neon","Forest Green","Midnight Blue","Lime Green","Silver","Vitality"]},
+  {id:"dev8", cat:"pods", brand:"Geekvape", name:"Aegis HERO 2", price:2600, strength:"-", strengthLabel:"—", volume:"—",
+   desc:"Компактный подмод, защита IP67. Ключ, 2 испарителя, провод, документация.",
+   photo:"img/dev8.jpg",
+   colors:["Grayish Blue","Light Green","Lime Green","Mint Green","Rubber White","Sky Blue"]},
+  {id:"dev9", cat:"pods", brand:"Geekvape", name:"Aegis HERO 5 Classic", price:2790, strength:"-", strengthLabel:"—", volume:"—",
+   desc:"Новое поколение HERO: ключ, 2 испарителя, провод, документация.",
+   photo:"img/dev9.jpg",
+   colors:["Iron Black","Racing Green","Turbo Blue","Blaze Red","Steel Silver","Red & White"]},
+  {id:"dev10", cat:"pods", brand:"Geekvape", name:"HERO 5 Racing Edition", price:2990, strength:"-", strengthLabel:"—", volume:"—",
+   desc:"Гоночная лимитка: 2 испарителя, документация.",
+   photo:"img/dev10.jpg",
+   colors:["Speed Red","Racing Blue","Vibe Green","Quantum Cyan","Lightning Yellow"]},
+  {id:"dev11", cat:"pods", brand:"Geekvape", name:"Aegis Hero Q", price:1700, strength:"-", strengthLabel:"—", volume:"—",
+   desc:"Лёгкий Q: 2 картриджа, ланьярд, провод, документация.",
+   photo:"img/dev11.jpg",
+   colors:["Black","Blue","Ocean Blue","Green","Wood Brown","Snow Pink","Emerald Green","Gray"]},
+  {id:"dev12", cat:"pods", brand:"Smoant", name:"Smoant Pasito 2", price:2490, strength:"-", strengthLabel:"—", volume:"—",
+   desc:"Легенда Pasito: 2 испарителя, провод, документация.",
+   photo:"img/dev12.jpg",
+   colors:["Ink","Malachite","Leather","Nymph","Marble","Prism","Pink Cyan"]},
+  {id:"dev13", cat:"pods", brand:"Geekvape", name:"Aegis Force", price:2990, strength:"-", strengthLabel:"—", volume:"—",
+   desc:"Новинка: дриптип, 2 испарителя, провод, документация.",
+   photo:"img/dev13.jpg",
+   colors:["Canyon Orange","Carbon Black","Chameleon Prism","Iris Purple","Ivory White","Moss Green"]},
+  {id:"dev14", cat:"pods", brand:"Geekvape", name:"Aegis Boost PRO 2", price:3300, strength:"-", strengthLabel:"—", volume:"—",
+   desc:"PRO 2: ключ, 2 испарителя, аккумулятор 18650, провод, документация.",
+   photo:"img/dev14.jpg",
+   colors:["Bottle Green","Golden Red","Pink Purple","Mint Blue","Silver"]},
+  {id:"dev15", cat:"pods", brand:"Geekvape", name:"Aegis Boost 3", price:2890, strength:"-", strengthLabel:"—", volume:"—",
+   desc:"Третье поколение Boost: ключ, 2 испарителя, провод, документация.",
+   photo:"img/dev15.jpg",
+   colors:["Midnight Gold","Black","Rainbow Purple","Midnight Red","Sapphire Blue","Sunset Red","Teal Blue","Silver"]},
+  {id:"dev16", cat:"pods", brand:"Geekvape", name:"Aegis nano 3", price:2490, strength:"-", strengthLabel:"—", volume:"—",
+   desc:"Новинка nano: 2 картриджа, документация.",
+   photo:"img/dev16.jpg",
+   colors:["Arctic Blue","Jungle Green","Midnight Dark","Polar Silver","Purple Bloom","Sunset Red"]},
 
-  // ---- ОДНОРАЗКИ: одна позиция, внутри модели/вкусы ----
-  {id:"dis", cat:"disposable", brand:"Elf Bar / Waka / HQD", line:"Одноразки",
-   name:"Одноразки", desc:"Одноразовые электронные сигареты. Выбери модель и вкус.",
-   price:1190, strength:"medium", strengthLabel:"2%", volume:"от 5000 затяжек",
+  // ---- ОДНОРАЗКИ: модель/вкус внутри позиции ----
+  {id:"elf", cat:"disposable", brand:"ELF BAR", line:"Triplex 30000",
+   name:"ELF BAR Triplex 30000", desc:"Одноразка, до 30 000 затяжек. Выбери вкус.",
+   price:1390, strength:"-", strengthLabel:"—", volume:"до 30000 тяг", photo:"img/elf.jpg",
    flavors:[
-     {name:"Черника малина", price:1290, desc:"Waka 10000 • 10000 затяжек"},
-     {name:"Арбуз лед", price:1190, desc:"Elf Bar BC5000 • 5000 затяжек"},
-     {name:"Виноград", price:1190, desc:"Lost Mary 5000 • 5000 затяжек"},
-     {name:"Мята", price:1290, desc:"HQD 7000 • 7000 затяжек"},
-     {name:"Кола", price:1390, desc:"Oxbar 8000 • 8000 затяжек"}
+     {name:"Апельсиновый всплеск"}, {name:"Виноград клюква"},
+     {name:"Кислая ежевика лёд"}, {name:"Клубника персик вишня"},
+     {name:"Ледяной арбуз"}, {name:"Черная смородина грейпфрут"},
+     {name:"Черника малина лёд"}
+   ]},
+  {id:"son", cat:"disposable", brand:"Funky Lands x Lost Mary", line:"Sonic-X",
+   name:"Sonic-X (Бездымный режим)", desc:"Одноразка с бездымным режимом, до 30 000 затяжек.",
+   price:1490, strength:"-", strengthLabel:"—", volume:"до 30000 тяг", photo:"img/son.jpg",
+   flavors:[
+     {name:"Арбуз кислый персик"}, {name:"Кислая клюква ананас"},
+     {name:"Кислое яблоко лёд"}, {name:"Кислый виноград лёд"},
+     {name:"Клюква лимон сода"}, {name:"Лимон лайм"},
+     {name:"Лимончелло"}, {name:"Черника гранат лайм"}
+   ]},
+  {id:"mel", cat:"disposable", brand:"Meloso", line:"X25000",
+   name:"Meloso X25000", desc:"Одноразка, до 25 000 затяжек. Выбери вкус.",
+   price:790, strength:"-", strengthLabel:"—", volume:"до 25000 тяг", photo:"img/mel.jpg",
+   flavors:[
+     {name:"Арбуз Лед"}, {name:"Виноград Малина Лед"},
+     {name:"Кислый Виноград Лед"}, {name:"Клубничная Жвачка"},
+     {name:"Клюква Виноград Лед"}, {name:"Малина"},
+     {name:"Черника Лед"}, {name:"Ягодный Микс Лед"}
    ]},
 
-  // ---- КАРТРИДЖИ (без вариантов) ----
-  {id:"pod1", cat:"cartridges", brand:"Vaporesso", name:"Картридж XROS (4 шт)", price:890, strength:"-", strengthLabel:"—", volume:"2ml",
-   desc:"Оригинальные картриджи XROS."},
-  {id:"pod2", cat:"cartridges", brand:"Geekvape", name:"Картридж Hero (3 шт)", price:790, strength:"-", strengthLabel:"—", volume:"2ml",
-   desc:"Картриджи Hero series."},
-  {id:"pod3", cat:"cartridges", brand:"Smoant", name:"Испаритель Pasito (3 шт)", price:750, strength:"-", strengthLabel:"—", volume:"—",
-   desc:"Испарители Pasito 2."},
+  // ---- СНЮС / НИКОТИНОВЫЕ ----
+  {id:"sn1", cat:"snus", brand:"Iceberg", name:"Iceberg — Emerald", price:470, strength:"hard", strengthLabel:"Hard 150mg", volume:"20шт",
+   desc:"Снюс Iceberg, крепость Hard (150мг).", photo:"img/sn1.jpg",
+   flavors:[{name:"Emerald"}]},
+  {id:"dual", cat:"snus", brand:"DUALL", name:"DUALL Extra Hard", price:470, strength:"extra", strengthLabel:"Extra Hard 200mg", volume:"20шт",
+   desc:"Снюс DUALL, крепость Extra Hard (200мг).", photo:"img/dual.jpg",
+   flavors:[
+     {name:"Мятные леденцы эвкалипт"}, {name:"Вишня мята"},
+     {name:"Сладкая мята"}, {name:"Мятная жвачка"}, {name:"Полярная мята"}
+   ]},
+  {id:"faf", cat:"snus", brand:"Faff", name:"Faff Hard", price:470, strength:"hard", strengthLabel:"Hard 150mg", volume:"20шт",
+   desc:"Снюс Faff, крепость Hard (150мг).", photo:"img/faf.jpg",
+   flavors:[
+     {name:"Cactus"}, {name:"Energy Cola"}, {name:"Orange soda"},
+     {name:"Peach tea"}, {name:"Top Mint"}
+   ]},
+  {id:"guc", cat:"snus", brand:"GUCCI", name:"GUCCI Hard", price:470, strength:"hard", strengthLabel:"Hard 150–200mg", volume:"20шт",
+   desc:"Снюс GUCCI, крепость Hard (150–200мг).", photo:"img/guc.jpg",
+   flavors:[
+     {name:"Клубничный мохито", desc:"150мг"}, {name:"Банан", desc:"150мг"},
+     {name:"Баблгам", desc:"150мг"}, {name:"Конфеты", desc:"150мг"},
+     {name:"Виски кола вишня", desc:"150мг"}, {name:"Классическая мята", desc:"150мг"},
+     {name:"DrPepper cherry", desc:"200мг"}, {name:"Haribo", desc:"200мг"},
+     {name:"Fanta grape", desc:"200мг"}, {name:"Mountain dew", desc:"200мг"}
+   ]},
+  {id:"dlt", cat:"snus", brand:"D.L.T.A", line:"Energy",
+   name:"D.L.T.A Energy", price:470, strength:"hard", strengthLabel:"Hard 150mg", volume:"20шт",
+   desc:"Никпэки D.L.T.A Energy, крепость Hard (150мг).", photo:"img/dlt.jpg",
+   flavors:[
+     {name:"Adrenaline Rush Mango"}, {name:"Adrenaline Rush Lichee"},
+     {name:"Adrenaline Rush ICE EFFECT"}, {name:"Burn Energy Fruit Punch"},
+     {name:"Burn Energy apple kiwi"}, {name:"Candy Blueberry Lemon"},
+     {name:"Green Grape Mint"}, {name:"Lime Mint"}
+   ]},
+  {id:"che", cat:"snus", brand:"CHEWE", line:"Жвачки",
+   name:"CHEWE (жвачки)", price:400, strength:"hard", strengthLabel:"Hard 80mg", volume:"40шт",
+   desc:"Никотиновые жвачки CHEWE, 40 шт, Hard (80мг).", photo:"img/che.jpg",
+   flavors:[
+     {name:"Мята"}, {name:"Гуава"}, {name:"Арбуз"}, {name:"Персик"}
+   ]},
+  {id:"dltw", cat:"snus", brand:"D.L.T.A", line:"Ватки",
+   name:"D.L.T.A Energy (ватки)", price:400, strength:"hard", strengthLabel:"Hard 75mg", volume:"70шт",
+   desc:"Никотиновые ватки D.L.T.A, 70 шт, Hard (75мг).", photo:"img/dltw.jpg",
+   flavors:[
+     {name:"Adrenaline Rush Lychee"}, {name:"Burn Original"}
+   ]},
+  {id:"sn3", cat:"snus", brand:"Odens", line:"Табак",
+   name:"Odens (табак)", price:470, strength:"medium", strengthLabel:"Medium 60mg", volume:"20шт",
+   desc:"Жевательный табак Odens, 20 шт, Medium (60мг).", photo:"img/sn3.jpg"},
 
-  // ---- СНЮС (без вариантов) ----
-  {id:"sn1", cat:"snus", brand:"Iceberg", name:"Iceberg — Strong Mint", price:550, strength:"extra", strengthLabel:"Extra strong", volume:"—",
-   desc:"Снюс Iceberg, вкус мята."},
-  {id:"sn2", cat:"snus", brand:"Siberia", name:"Siberia — Red", price:590, strength:"extra", strengthLabel:"Extra strong", volume:"—",
-   desc:"Снюс Siberia."},
-  {id:"sn3", cat:"snus", brand:"Odens", name:"Odens — Cold Dry", price:520, strength:"medium", strengthLabel:"Medium", volume:"—",
-   desc:"Снюс Odens."}
+  // ---- РАСХОДНИКИ: испары, картриджи, баки, никобустер ----
+  {id:"car", cat:"cartridges", brand:"Geekvape / Vaporesso / Smoant", line:"Испары и картриджи",
+   name:"Испары и картриджи", desc:"Расходники для подов. Цена за 1 шт.", vlabel:"Модель",
+   price:300, strength:"-", strengthLabel:"—", volume:"1 шт", photo:"img/car.jpg",
+   flavors:[
+     {name:"Geekvape B 0.2"}, {name:"Geekvape Q 0.6"}, {name:"Geekvape P 0.15"},
+     {name:"Geekvape Aegis nano 0.6"}, {name:"Voopoo PnP-TW15 0.15Ω"},
+     {name:"Rincoe Manto Aio 0.3Ω"}, {name:"Smoant K5 0.15"},
+     {name:"Xros 0.6 (3мл)"}, {name:"Xros 0.4 (3мл)"}
+   ]},
+  {id:"tank", cat:"cartridges", brand:"Geekvape / Smoant / Rincoe", line:"Баки",
+   name:"Баки (танки)", desc:"Баки для устройств. Цена за 1 шт.", vlabel:"Модель",
+   price:500, strength:"-", strengthLabel:"—", volume:"1 шт", photo:"img/tank.jpg",
+   flavors:[
+     {name:"Geek Vape B60"}, {name:"Geek Vape H45"}, {name:"Geek Vape Hero 5"},
+     {name:"Geek Vape B100"}, {name:"Smoant Pasito III"}, {name:"Rincoe Manto Aio 80W"}
+   ]},
+  {id:"nic", cat:"cartridges", brand:"NicBoost", line:"Никобустер",
+   name:"Никобустер", desc:"Бустер крепости для жидкостей. Цена за 1 шт.", vlabel:"Крепость",
+   price:150, strength:"-", strengthLabel:"—", volume:"1 шт", photo:"img/nic.jpg",
+   flavors:[
+     {name:"Strong 4% (40мг)", desc:"Strong"}, {name:"Extra hard 6% (60мг)", desc:"Extra hard"}
+   ]}
 ];
 
 const CATS = [
@@ -110,11 +217,11 @@ const CATS = [
   {id:"liquids", name:"Жидкости"},
   {id:"pods", name:"Поды"},
   {id:"disposable", name:"Одноразки"},
-  {id:"cartridges", name:"Картриджи"},
-  {id:"snus", name:"Снюс"}
+  {id:"cartridges", name:"Расходники"},
+  {id:"snus", name:"Снюс и никотин"}
 ];
 
-// Цвета корпусов подов -> hex для кружка-выбора
+// Русские цвета подов -> hex (выбор кружком). Для английских используется подбор в app.js.
 const COLOR_HEX = {
   "Чёрный":"#2A2A2E","Серый":"#8B8B8F","Серебристый":"#C9CCD4","Мятный":"#7FD9C2",
   "Голубой":"#5BB8E8","Розовый":"#F29AB8","Зелёный":"#3E9B57","Красный":"#D64545",
@@ -122,7 +229,7 @@ const COLOR_HEX = {
   "Прозрачный":"rgba(200,200,210,.35)"
 };
 
-// Настройки доставки/оплаты (поменяй под себя)
+// Настройки доставки/оплаты (менеджер канала)
 const SHOP = {
   name: "VapeOasis",
   manager: "@lzllllzll",
