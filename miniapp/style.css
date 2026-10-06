@@ -107,6 +107,8 @@ a{color:inherit}
 .meta{font-size:12px;color:var(--muted)}
 .price{font-size:18px;font-weight:800}
 .hint{font-size:11px;color:var(--accent);font-weight:800;text-transform:uppercase;letter-spacing:.4px}
+.promo{margin:12px 0;padding:11px 13px;border-radius:12px;border:1px dashed var(--accent);background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 18%,transparent),color-mix(in srgb,var(--accent) 5%,transparent));color:var(--ink);font-size:12.5px;font-weight:700;line-height:1.45}
+.promo b{color:var(--accent)}
 .add{background:var(--btnBg);color:var(--btnInk);border:0;border-radius:12px;padding:12px;font-size:15px;font-weight:800;cursor:pointer;transition:transform .15s}
 .add:active{transform:scale(.93)}
 .add.pop{animation:pop .35s}
@@ -193,6 +195,8 @@ pre{white-space:pre-wrap;background:#14100A;color:#F5EDD9;padding:12px;border-ra
 [data-theme="neon"] .chip.on small{color:#EDE7FF}
 [data-theme="neon"] .chip.on .sw{outline-color:#fff}
 [data-theme="neon"] .hint{color:#C9B8FF}
+[data-theme="neon"] .promo{background:linear-gradient(135deg,rgba(109,40,217,.4),rgba(24,19,38,.9));border-color:rgba(168,85,247,.65);color:#F4F0FF}
+[data-theme="neon"] .promo b{color:#C9B8FF}
 [data-theme="neon"] .btn.gold:disabled{opacity:.4;background:rgba(60,42,110,.6)}
 /* блоки каталога и кабинета — стекло: текст не лежит прямо на фото */
 [data-theme="neon"] #shopView,

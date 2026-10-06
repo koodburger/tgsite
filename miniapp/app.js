@@ -129,6 +129,7 @@ function renderDetail(){
   }
   html += `<div class="row"><span>Количество</span><span class="qty"><button data-dq>−</button><b>${det.qty}</b><button data-iq>+</button></span></div>`;
   html += `<div class="row"><span>Итого</span><b id="detPrice">${money(price)}</b></div>`;
+  if(p.cat==="pods") html += `<div class="promo">🎁 Скидка на жидкость <b>−50%</b> при оформлении заказа вместе с подом</div>`;
   const btnText = !ready
     ? (needFlavor && !fSel ? "Сначала выбери вкус" : "Сначала выбери цвет")
     : `В корзину • ${money(price)}`;
@@ -168,6 +169,8 @@ function renderSheet(){
   html += entries.map(([k,q])=>{const it=itemInfo(k);return `
     <div class="row"><span>${it.label}<br><small>${money(it.price)} × ${q} = ${money(it.price*q)}</small></span>
     <span class="qty"><button data-dec="${k}">−</button><b>${q}</b><button data-inc="${k}">+</button></span></div>`;}).join("");
+  const hasPod = entries.some(([k])=>{const it=itemInfo(k);return it&&it.p.cat==="pods";});
+  if(hasPod) html += `<div class="promo">🎁 Скидка на жидкость <b>−50%</b> при оформлении заказа вместе с подом</div>`;
   html += `<h4>Доставка</h4><div class="seg">${SHOP.deliveryTypes.map(t=>`<button class="${t===deliveryType?'on':''}" data-dt="${t}">${t}${t==="Курьер"?` ${money(SHOP.deliveryCourier)}`:" • 0₽"}</button>`).join("")}</div>
   <div class="small">Курьер бесплатно от ${money(SHOP.deliveryFreeFrom)}. Сейчас: ${money(fee)}</div>
   <h4>Оплата (вручную)</h4><div class="seg">${SHOP.payments.map(t=>`<button class="${t===payment?'on':''}" data-pay="${t}">${t}</button>`).join("")}</div>
