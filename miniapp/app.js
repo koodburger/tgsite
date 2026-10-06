@@ -129,7 +129,9 @@ function renderDetail(){
   }
   html += `<div class="row"><span>Количество</span><span class="qty"><button data-dq>−</button><b>${det.qty}</b><button data-iq>+</button></span></div>`;
   html += `<div class="row"><span>Итого</span><b id="detPrice">${money(price)}</b></div>`;
-  const btnText = !ready? (!needFlavor||!fSel? "Сначала выбери вкус" : "Сначала выбери цвет") : `В корзину • ${money(price)}`;
+  const btnText = !ready
+    ? (needFlavor && !fSel ? "Сначала выбери вкус" : "Сначала выбери цвет")
+    : `В корзину • ${money(price)}`;
   html += `<button class="btn gold" id="detAdd" style="width:100%;margin-top:10px" ${ready?"":"disabled"}>${btnText}</button>`;
   $("#sheetIn").innerHTML = html;
   document.querySelectorAll("[data-flavor]").forEach(b=>b.onclick=()=>{det.flavor=b.dataset.flavor;renderDetail();});
