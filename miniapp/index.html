@@ -20,6 +20,7 @@
     <button class="theme-btn dot-glacier" data-theme="glacier" title="Ледник">❄️</button>
     <button class="theme-btn dot-flame" data-theme="flame" title="Пламя">🔥</button>
     <button class="theme-btn dot-forest" data-theme="forest" title="Лес">🌲</button>
+    <button class="theme-btn dot-neon" data-theme="neon" title="Нуар (фото на фоне)">🌌</button>
   </div>
 </div>
 
@@ -51,7 +52,10 @@
 
 <div id="cabView" style="display:none;padding:0 14px 120px">
   <h3>👤 Личный кабинет</h3>
-  <div class="warn">Каркас: данные хранятся в телефоне (localStorage). История и бонусы дублируются ботом при заказе.</div>
+  <div class="profile" id="profile">
+    <div class="ava" id="profAva">👤</div>
+    <div><b id="profName">Гость</b><br><span class="small" id="profSub"></span></div>
+  </div>
   <div class="row"><span>⭐ Мои бонусы</span><b id="myBonus">0</b></div>
   <div class="row"><span>🎁 Бонус за друга</span><b id="refBonus">150</b></div>
   <button class="btn gold" id="refBtn" style="width:100%;color:#1A140D">📨 Пригласить друга</button>
