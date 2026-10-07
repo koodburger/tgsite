@@ -224,7 +224,7 @@ function sendOrder(){
   const earn = Math.floor(total*SHOP.bonusPercent/100);
   const comment = document.querySelector("#fio")?.value || "";
   const order = {
-    items: entries.map(([k,q])=>{const it=itemInfo(k);return {id:it.p.id, name:it.label, price:it.price, qty:q};}),
+    items: entries.map(([k,q])=>{const it=itemInfo(k);return {id:it.p.id, name:it.p.name, brand:it.p.brand, cat:it.p.cat, flavor:it.fl||"", color:it.col||"", label:it.label, price:it.price, qty:q};}),
     subtotal: sub, deliveryFee: fee, total, deliveryType, payment, comment,
     bonusEarn: earn, refer: localStorage.getItem(LS_REF)||"",
     from: UID
