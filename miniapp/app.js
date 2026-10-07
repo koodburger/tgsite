@@ -74,14 +74,20 @@ function cartTotals(){
   const sub = entries.reduce((s,[k,q])=>{const it=itemInfo(k);return s+it.price*q;},0);
   const hasPod = entries.some(([k])=>{const it=itemInfo(k);return it&&it.p.cat==="pods";});
   const hasLiquid = entries.some(([k])=>{const it=itemInfo(k);return it&&it.p.cat==="liquids";});
-  // скидка −50% на каждую жижу, если в корзине есть под
-  const discount = (hasPod&&hasLiquid)
-    ? entries.reduce((s,[k,q])=>{const it=itemInfo(k);return (it&&it.p.cat==="liquids")?s+Math.round(it.price*q*0.5):s;},0)
-    : 0;
+  // скидка −50% ТОЛЬКО на одну жижу (самую дешёвую), если в корзине есть под
+  let discountKey = null, discount = 0;
+  if(hasPod && hasLiquid){
+    for(const [k,q] of entries){
+      const it = itemInfo(k);
+      if(!it || it.p.cat!=="liquids") continue;
+      if(discountKey===null || it.price < itemInfo(discountKey).price) discountKey = k;
+    }
+    if(discountKey!==null) discount = Math.round(itemInfo(discountKey).price*0.5);
+  }
   const goods = sub - discount;
   const fee = deliveryFee(goods), total = goods + fee;
   const earn = Math.floor(total*SHOP.bonusPercent/100);
-  return {entries, sub, hasPod, hasLiquid, discount, goods, fee, total, earn};
+  return {entries, sub, hasPod, hasLiquid, discount, discountKey, goods, fee, total, earn};
 }
 
 // --- рефералка (каркас) ---
@@ -204,11 +210,11 @@ function openSheet(){ renderSheet(); $("#sheet").classList.add("open"); }
 $("#sheet").onclick = e=>{ if(e.target.id==="sheet") $("#sheet").classList.remove("open"); };
 
 function renderSheet(){
-  const {entries, sub, hasPod, hasLiquid, discount, fee, total, earn} = cartTotals();
+  const {entries, sub, hasPod, hasLiquid, discount, discountKey, fee, total, earn} = cartTotals();
   let html = `<h3>🛒 Корзина</h3>`;
   if(!entries.length) html += `<p>Пусто. Тапни на товар и выбери вкус/цвет 👆</p>`;
-  html += entries.map(([k,q])=>{const it=itemInfo(k);const dis=(hasPod&&it.p.cat==="liquids")?Math.round(it.price*q*0.5):0;return `
-    <div class="row"><span>${it.label}${dis?` <small class="ok">−50%</small>`:""}<br><small>${money(it.price)} × ${q} = ${money(it.price*q)}${dis?` → <b class="ok">${money(it.price*q-dis)}</b>`:""}</small></span>
+  html += entries.map(([k,q])=>{const it=itemInfo(k);const dis=(k===discountKey);return `
+    <div class="row"><span>${it.label}${dis?` <small class="ok">−50% на 1 шт</small>`:""}<br><small>${money(it.price)} × ${q} = ${money(it.price*q)}</small></span>
     <span class="qty"><button data-dec="${k}">−</button><b>${q}</b><button data-inc="${k}">+</button></span></div>`;}).join("");
   if(hasPod && hasLiquid) html += `<div class="promo on">🎁 Скидка на жижу <b>−50%</b>: <b>−${money(discount)}</b></div>`;
   else if(hasPod) html += `<div class="promo">🎁 Добавь жижу — на неё будет скидка <b>−50%</b></div>`;
