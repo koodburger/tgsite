@@ -68,6 +68,21 @@ function cartCount(){ return Object.values(cart).reduce((a,b)=>a+b,0); }
 function cartSubtotal(){ return Object.entries(cart).reduce((s,[k,q])=>{const it=itemInfo(k);return it?s+it.price*q:s;},0); }
 function getBonus(){ return parseInt(localStorage.getItem(LS_BONUS)||"0"); }
 function deliveryFee(sub){ if(deliveryType==="Самовывоз") return 0; return sub>=SHOP.deliveryFreeFrom?0:SHOP.deliveryCourier; }
+// Единый расчёт корзины: скидка на жижу −50% при наличии пода (вейпа)
+function cartTotals(){
+  const entries = Object.entries(cart).filter(([k])=>itemInfo(k));
+  const sub = entries.reduce((s,[k,q])=>{const it=itemInfo(k);return s+it.price*q;},0);
+  const hasPod = entries.some(([k])=>{const it=itemInfo(k);return it&&it.p.cat==="pods";});
+  const hasLiquid = entries.some(([k])=>{const it=itemInfo(k);return it&&it.p.cat==="liquids";});
+  // скидка −50% на каждую жижу, если в корзине есть под
+  const discount = (hasPod&&hasLiquid)
+    ? entries.reduce((s,[k,q])=>{const it=itemInfo(k);return (it&&it.p.cat==="liquids")?s+Math.round(it.price*q*0.5):s;},0)
+    : 0;
+  const goods = sub - discount;
+  const fee = deliveryFee(goods), total = goods + fee;
+  const earn = Math.floor(total*SHOP.bonusPercent/100);
+  return {entries, sub, hasPod, hasLiquid, discount, goods, fee, total, earn};
+}
 
 // --- рефералка (каркас) ---
 (function(){
@@ -155,7 +170,8 @@ function renderDetail(){
   }
   html += `<div class="row"><span>Количество</span><span class="qty"><button data-dq>−</button><b>${det.qty}</b><button data-iq>+</button></span></div>`;
   html += `<div class="row"><span>Итого</span><b id="detPrice">${money(price)}</b></div>`;
-  if(p.cat==="pods") html += `<div class="promo">🎁 Скидка на жидкость <b>−50%</b> при оформлении заказа вместе с подом</div>`;
+  if(p.cat==="pods") html += `<div class="promo">🎁 Возьми жижу к этому поду — на неё скидка <b>−50%</b></div>`;
+  if(p.cat==="liquids") html += `<div class="promo">🎁 Добавь под в корзину — на эту жижу будет скидка <b>−50%</b></div>`;
   const btnText = !ready
     ? (needFlavor && !fSel ? "Сначала выбери "+(p.vlabel||"вкус").toLowerCase() : "Сначала выбери цвет")
     : `В корзину • ${money(price)}`;
@@ -177,32 +193,33 @@ function renderDetail(){
 
 // --- низ ---
 function renderBottom(){
-  const n = cartCount(), sub = cartSubtotal();
-  $("#cartInfo").textContent = n?`В корзине ${n} шт • ${money(sub)}`:"Корзина пуста";
-  $("#totalInfo").textContent = n?`+ бонусы ${Math.floor(sub*SHOP.bonusPercent/100)}⭐`:"";
+  const {entries, sub, discount, total} = cartTotals();
+  const n = entries.length;
+  const count = Object.values(cart).reduce((a,b)=>a+b,0);
+  $("#cartInfo").textContent = count?`В корзине ${count} шт • ${money(total)}`:"Корзина пуста";
+  $("#totalInfo").textContent = count?(discount?`🎁 −${money(discount)} • итого ${money(total)}`:`+ бонусы ${Math.floor(total*SHOP.bonusPercent/100)}⭐`):"";
 }
 $("#openCart").onclick = openSheet; $("#checkoutBtn").onclick = openSheet;
 function openSheet(){ renderSheet(); $("#sheet").classList.add("open"); }
 $("#sheet").onclick = e=>{ if(e.target.id==="sheet") $("#sheet").classList.remove("open"); };
 
 function renderSheet(){
-  const entries = Object.entries(cart).filter(([k])=>itemInfo(k));
-  const sub = entries.reduce((s,[k,q])=>{const it=itemInfo(k);return s+it.price*q;},0);
-  const fee = deliveryFee(sub), total = sub+fee;
-  const earn = Math.floor(total*SHOP.bonusPercent/100);
+  const {entries, sub, hasPod, hasLiquid, discount, fee, total, earn} = cartTotals();
   let html = `<h3>🛒 Корзина</h3>`;
   if(!entries.length) html += `<p>Пусто. Тапни на товар и выбери вкус/цвет 👆</p>`;
-  html += entries.map(([k,q])=>{const it=itemInfo(k);return `
-    <div class="row"><span>${it.label}<br><small>${money(it.price)} × ${q} = ${money(it.price*q)}</small></span>
+  html += entries.map(([k,q])=>{const it=itemInfo(k);const dis=(hasPod&&it.p.cat==="liquids")?Math.round(it.price*q*0.5):0;return `
+    <div class="row"><span>${it.label}${dis?` <small class="ok">−50%</small>`:""}<br><small>${money(it.price)} × ${q} = ${money(it.price*q)}${dis?` → <b class="ok">${money(it.price*q-dis)}</b>`:""}</small></span>
     <span class="qty"><button data-dec="${k}">−</button><b>${q}</b><button data-inc="${k}">+</button></span></div>`;}).join("");
-  const hasPod = entries.some(([k])=>{const it=itemInfo(k);return it&&it.p.cat==="pods";});
-  if(hasPod) html += `<div class="promo">🎁 Скидка на жидкость <b>−50%</b> при оформлении заказа вместе с подом</div>`;
+  if(hasPod && hasLiquid) html += `<div class="promo on">🎁 Скидка на жижу <b>−50%</b>: <b>−${money(discount)}</b></div>`;
+  else if(hasPod) html += `<div class="promo">🎁 Добавь жижу — на неё будет скидка <b>−50%</b></div>`;
+  else if(hasLiquid) html += `<div class="promo">🎁 Добавь под (вейп) — на жижу будет скидка <b>−50%</b></div>`;
   html += `<h4>Доставка</h4><div class="seg">${SHOP.deliveryTypes.map(t=>`<button class="${t===deliveryType?'on':''}" data-dt="${t}">${t}${t==="Курьер"?` ${money(SHOP.deliveryCourier)}`:" • 0₽"}</button>`).join("")}</div>
   <div class="small">Курьер бесплатно от ${money(SHOP.deliveryFreeFrom)}. Сейчас: ${money(fee)}</div>
   <h4>Оплата (вручную)</h4><div class="seg">${SHOP.payments.map(t=>`<button class="${t===payment?'on':''}" data-pay="${t}">${t}</button>`).join("")}</div>
   <div class="small">Доставка и оплата товара заказанного вами будет на месте, то есть договорно в ЛС. Заказ отдается при встрече. Напиши ему: ${SHOP.manager}</div>
   <input class="fld" id="fio" placeholder="Имя + комментарий (необязательно)">
   <div class="row"><span>Товары</span><b>${money(sub)}</b></div>
+  ${discount?`<div class="row"><span>🎁 Скидка на жижу −50%</span><b class="ok">−${money(discount)}</b></div>`:""}
   <div class="row"><span>Доставка</span><b>${money(fee)}</b></div>
   <div class="row"><span>Итого</span><b>${money(total)}</b></div>
   <div class="row"><span>⭐ Начислят бонусов</span><b class="ok">+${earn} (баланс ${getBonus()+earn})</b></div>`;
@@ -217,15 +234,12 @@ function renderSheet(){
 }
 
 function sendOrder(){
-  const entries = Object.entries(cart).filter(([k])=>itemInfo(k));
+  const {entries, sub, discount, fee, total, earn} = cartTotals();
   if(!entries.length) return;
-  const sub = entries.reduce((s,[k,q])=>{const it=itemInfo(k);return s+it.price*q;},0);
-  const fee = deliveryFee(sub), total = sub+fee;
-  const earn = Math.floor(total*SHOP.bonusPercent/100);
   const comment = document.querySelector("#fio")?.value || "";
   const order = {
     items: entries.map(([k,q])=>{const it=itemInfo(k);return {id:it.p.id, name:it.p.name, brand:it.p.brand, cat:it.p.cat, flavor:it.fl||"", color:it.col||"", label:it.label, price:it.price, qty:q};}),
-    subtotal: sub, deliveryFee: fee, total, deliveryType, payment, comment,
+    subtotal: sub, discount, deliveryFee: fee, total, deliveryType, payment, comment,
     bonusEarn: earn, refer: localStorage.getItem(LS_REF)||"",
     from: UID
   };

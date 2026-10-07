@@ -233,7 +233,7 @@ const COLOR_HEX = {
 const SHOP = {
   name: "VapeOasis",
   manager: "@lzllllzll",
-  bonusPercent: 5,          // % бонусами с заказа
+  bonusPercent: 2,          // % бонусами с заказа
   referBonus: 150,          // бонус за друга (каркас, localStorage)
   deliveryCourier: 300,     // курьер, руб
   deliveryFreeFrom: 3000,   // бесплатно от суммы
