@@ -16,6 +16,7 @@ let cart = JSON.parse(localStorage.getItem(LS_CART)||"{}");
 let deliveryType = "Самовывоз", payment = "СБП";
 let activeCat = "all";
 let det = null; // состояние открытой карточки товара: {pid, flavor, color, qty}
+let discountPick = localStorage.getItem("vo_disc") || null; // жижа, на которую клиент применил скидку −50%
 
 const $ = s=>document.querySelector(s);
 const money = n=>n+"₽";
@@ -74,15 +75,13 @@ function cartTotals(){
   const sub = entries.reduce((s,[k,q])=>{const it=itemInfo(k);return s+it.price*q;},0);
   const hasPod = entries.some(([k])=>{const it=itemInfo(k);return it&&it.p.cat==="pods";});
   const hasLiquid = entries.some(([k])=>{const it=itemInfo(k);return it&&it.p.cat==="liquids";});
-  // скидка −50% ТОЛЬКО на одну жижу (самую дешёвую), если в корзине есть под
+  // скидка −50% на ОДНУ жижу, которую выбрал клиент (только при наличии пода)
   let discountKey = null, discount = 0;
   if(hasPod && hasLiquid){
-    for(const [k,q] of entries){
-      const it = itemInfo(k);
-      if(!it || it.p.cat!=="liquids") continue;
-      if(discountKey===null || it.price < itemInfo(discountKey).price) discountKey = k;
-    }
-    if(discountKey!==null) discount = Math.round(itemInfo(discountKey).price*0.5);
+    const liquidKeys = entries.filter(([k])=>{const it=itemInfo(k);return it&&it.p.cat==="liquids";}).map(([k])=>k);
+    if(!discountPick || !liquidKeys.includes(discountPick)) discountPick = liquidKeys[0];
+    discountKey = discountPick;
+    discount = Math.round(itemInfo(discountKey).price*0.5);
   }
   const goods = sub - discount;
   const fee = deliveryFee(goods), total = goods + fee;
@@ -216,7 +215,11 @@ function renderSheet(){
   html += entries.map(([k,q])=>{const it=itemInfo(k);const dis=(k===discountKey);return `
     <div class="row"><span>${it.label}${dis?` <small class="ok">−50% на 1 шт</small>`:""}<br><small>${money(it.price)} × ${q} = ${money(it.price*q)}</small></span>
     <span class="qty"><button data-dec="${k}">−</button><b>${q}</b><button data-inc="${k}">+</button></span></div>`;}).join("");
-  if(hasPod && hasLiquid) html += `<div class="promo on">🎁 Скидка на жижу <b>−50%</b>: <b>−${money(discount)}</b></div>`;
+  if(hasPod && hasLiquid){
+    html += `<h4>🎁 Жижа со скидкой −50% (выбери одну)</h4>`;
+    html += `<div class="chips">${entries.filter(([k])=>{const it=itemInfo(k);return it&&it.p.cat==="liquids";}).map(([k])=>{const it=itemInfo(k);return `<button class="chip ${k===discountKey?'on':''}" data-disc="${k}">${it.label}</button>`;}).join("")}</div>`;
+    html += `<div class="promo on">Скидка на выбранную жижу <b>−50%</b>: <b>−${money(discount)}</b></div>`;
+  }
   else if(hasPod) html += `<div class="promo">🎁 Добавь жижу — на неё будет скидка <b>−50%</b></div>`;
   else if(hasLiquid) html += `<div class="promo">🎁 Добавь под (вейп) — на жижу будет скидка <b>−50%</b></div>`;
   html += `<h4>Доставка</h4><div class="seg">${SHOP.deliveryTypes.map(t=>`<button class="${t===deliveryType?'on':''}" data-dt="${t}">${t}${t==="Курьер"?` ${money(SHOP.deliveryCourier)}`:" • 0₽"}</button>`).join("")}</div>
@@ -234,6 +237,7 @@ function renderSheet(){
   $("#sheetIn").innerHTML = html;
   document.querySelectorAll("[data-inc]").forEach(b=>b.onclick=()=>{cart[b.dataset.inc]++;saveCart();renderSheet();});
   document.querySelectorAll("[data-dec]").forEach(b=>b.onclick=()=>{const k=b.dataset.dec;cart[k]--;if(cart[k]<=0)delete cart[k];saveCart();renderSheet();});
+  document.querySelectorAll("[data-disc]").forEach(b=>b.onclick=()=>{discountPick=b.dataset.disc;localStorage.setItem("vo_disc",discountPick);renderSheet();});
   document.querySelectorAll("[data-dt]").forEach(b=>b.onclick=()=>{deliveryType=b.dataset.dt;renderSheet();});
   document.querySelectorAll("[data-pay]").forEach(b=>b.onclick=()=>{payment=b.dataset.pay;renderSheet();});
   $("#sendOrder") && ($("#sendOrder").onclick = sendOrder);
