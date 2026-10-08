@@ -155,7 +155,9 @@ function renderDetail(){
   const needFlavor = !!p.flavors?.length, needColor = !!p.colors?.length;
   const ready = (!needFlavor || fSel) && (!needColor || cSel);
   const price = priceOf(p, fSel) * det.qty;
-  let html = p.photo?`<img class="det-ph" src="${p.photo}" alt="${p.name}">`:"";
+  const cp = (typeof COLOR_PHOTOS!=="undefined" && COLOR_PHOTOS[p.id]) || {};
+  const photo = (cSel && cp[cSel]) || p.photo;
+  let html = photo?`<img class="det-ph" src="${photo}" alt="${p.name}">`:"";
   html += `<h3>${catEmoji(p.cat)} ${p.name}</h3>`;
   html += `<p class="small">${p.desc||""}</p>`;
   html += `<div class="row"><span>Бренд</span><b>${p.brand}</b></div>`;
