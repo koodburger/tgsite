@@ -80,7 +80,7 @@ function bonusBurnText(){
   const days=Math.max(0, Math.ceil((exp-Date.now())/86400000));
   return `🔥 сгорят ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()} (через ${days} дн.)`;
 }
-function getBonus(){ burnBonusIfExpired(); return parseInt(localStorage.getItem(LS_BONUS)||"0"); }
+function getBonus(){ burnBonusIfExpired(); const v=parseInt(localStorage.getItem(LS_BONUS)||"0"); if(v>0 && !bonusExp()) touchBonusExpiry(); return v; }
 function deliveryFee(sub){ if(deliveryType==="Самовывоз") return 0; return sub>=SHOP.deliveryFreeFrom?0:SHOP.deliveryCourier; }
 // Единый расчёт корзины: скидка на жижу −50% при наличии пода (вейпа)
 function cartTotals(){
