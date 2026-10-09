@@ -2,7 +2,7 @@ const tg = window.Telegram?.WebApp; tg?.expand?.();
 const UID = tg?.initDataUnsafe?.user?.id || "guest";
 const START_PARAM = tg?.initDataUnsafe?.start_param || new URLSearchParams(location.search).get("startapp") || "";
 
-const LS_CART="vo_cart", LS_BONUS="vo_bonus", LS_HIST="vo_hist", LS_REF="vo_ref_done";
+const LS_CART="vo_cart", LS_BONUS="vo_bonus", LS_HIST="vo_hist", LS_REF="vo_ref_done", LS_BONUS_EXP="vo_bonus_exp";
 let cart = JSON.parse(localStorage.getItem(LS_CART)||"{}");
 // чистка: отбрасываем ключи от старой версии каталога / битые записи
 (function(){
@@ -67,7 +67,20 @@ function optHint(p){ if(p.flavors) return p.flavors.length+" вкусов"; if(p
 function saveCart(){ localStorage.setItem(LS_CART, JSON.stringify(cart)); renderBottom(); }
 function cartCount(){ return Object.values(cart).reduce((a,b)=>a+b,0); }
 function cartSubtotal(){ return Object.entries(cart).reduce((s,[k,q])=>{const it=itemInfo(k);return it?s+it.price*q:s;},0); }
-function getBonus(){ return parseInt(localStorage.getItem(LS_BONUS)||"0"); }
+// --- бонусы: живут 21 день, потом сгорают ---
+const BONUS_BURN_DAYS = 21;
+function bonusExp(){ const t=parseInt(localStorage.getItem(LS_BONUS_EXP)||"0"); return t>0?t:0; }
+function burnBonusIfExpired(){ const exp=bonusExp(); if(exp && Date.now()>=exp){ localStorage.setItem(LS_BONUS,"0"); localStorage.removeItem(LS_BONUS_EXP); } }
+function touchBonusExpiry(){ localStorage.setItem(LS_BONUS_EXP, String(Date.now()+BONUS_BURN_DAYS*86400000)); }
+function bonusBurnText(){
+  const b=getBonus(); if(b<=0) return "";
+  const exp=bonusExp(); if(!exp) return "";
+  const pad=n=>String(n).padStart(2,"0");
+  const d=new Date(exp);
+  const days=Math.max(0, Math.ceil((exp-Date.now())/86400000));
+  return `🔥 сгорят ${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()} (через ${days} дн.)`;
+}
+function getBonus(){ burnBonusIfExpired(); return parseInt(localStorage.getItem(LS_BONUS)||"0"); }
 function deliveryFee(sub){ if(deliveryType==="Самовывоз") return 0; return sub>=SHOP.deliveryFreeFrom?0:SHOP.deliveryCourier; }
 // Единый расчёт корзины: скидка на жижу −50% при наличии пода (вейпа)
 function cartTotals(){
@@ -262,6 +275,7 @@ function sendOrder(){
   hist.unshift({date:new Date().toLocaleString(), total, items:entries.length, deliveryType});
   localStorage.setItem(LS_HIST, JSON.stringify(hist.slice(0,30)));
   localStorage.setItem(LS_BONUS, String(getBonus()+earn));
+  if(earn>0) touchBonusExpiry();
   Object.keys(cart).forEach(k=>delete cart[k]); saveCart(); renderGrid();
   $("#sheet").classList.remove("open"); renderBottom();
 
@@ -287,6 +301,7 @@ function renderCab(){
     $("#profSub").textContent = "Открой через Telegram — увидишь имя и аватар";
   }
   $("#myBonus").textContent = getBonus();
+  const be = $("#myBonusExp"); if(be) be.textContent = bonusBurnText();
   const hist = JSON.parse(localStorage.getItem(LS_HIST)||"[]");
   $("#history").innerHTML = hist.length?hist.map(h=>`<div class="row"><span>${h.date}<br><small>${h.items} поз • ${h.deliveryType}</small></span><b>${money(h.total)}</b></div>`).join(""):"<p class='small'>Пока пусто.</p>";
 }
@@ -294,7 +309,7 @@ function renderCab(){
 function renderBonus(){
   const bonus = getBonus();
   const bcount = $("#bonusCount");
-  if(bcount) bcount.textContent = `Баланс бонусов: ${bonus} ⭐`;
+  if(bcount) bcount.textContent = `Баланс бонусов: ${bonus} ⭐` + (bonus>0 && bonusBurnText() ? ` • ${bonusBurnText()}` : "");
   const bg = $("#bonusGrid");
   if(!bg) return;
   const list = PRODUCTS.slice().sort((a,b)=> (a.price-b.price));
@@ -365,6 +380,7 @@ function openBonusDetail(id){
       hist.unshift({date:new Date().toLocaleString(), total:p.price, items:1, deliveryType, type:"bonus"});
       localStorage.setItem(LS_HIST, JSON.stringify(hist.slice(0,30)));
       localStorage.setItem(LS_BONUS, String(Math.max(0,b-p.price)));
+      if(getBonus()<=0) localStorage.removeItem(LS_BONUS_EXP); else if(!bonusExp()) touchBonusExpiry();
       $("#sheet").classList.remove("open");
       if(tg?.sendData){ tg.sendData(JSON.stringify(order)); }
       else { $("#sheetIn").innerHTML = `<h3>✅ Заказ за бонусы собран!</h3><pre>${JSON.stringify(order,null,2)}</pre>`; $("#sheet").classList.add("open"); }
