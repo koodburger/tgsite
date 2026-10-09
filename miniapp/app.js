@@ -318,6 +318,63 @@ function renderBonus(){
   });
 }
 
+function openBonusDetail(id){
+  const p = byId(id); if(!p) return;
+  const b = getBonus();
+  const can = b >= p.price;
+  const needFlavor = !!p.flavors?.length, needColor = !!p.colors?.length;
+  const cp = (typeof COLOR_PHOTOS!=="undefined" && COLOR_PHOTOS[p.id]) || {};
+  let fSel = null, cSel = null;
+  function renderBD(){
+    const ready = (!needFlavor || fSel) && (!needColor || cSel);
+    const photo = (cSel && cp[cSel]) || p.photo;
+    let html = `<h3>⭐ Купить за бонусы</h3>`;
+    if(photo) html += `<img class="det-ph" src="${photo}" alt="${p.name}">`;
+    html += `<h3>${catEmoji(p.cat)} ${p.name}</h3>`;
+    html += `<p class="small">${p.desc||""}</p>`;
+    html += `<div class="row"><span>Цена</span><b>${money(p.price)} • ${p.price} ⭐</b></div>`;
+    html += `<div class="row"><span>Твой баланс</span><b>${b} ⭐</b></div>`;
+    if(needFlavor){
+      html += `<h4>${p.vlabel||"Вкус"}</h4>`;
+      html += `<div class="chips">${p.flavors.map(f=>
+        `<button class="chip ${f.name===fSel?"on":""}" data-bf="${f.name}">${f.name}</button>`).join("")}</div>`;
+    }
+    if(needColor){
+      html += `<h4>Цвет корпуса</h4>`;
+      html += `<div class="chips">${p.colors.map(c=>{
+        const sw = COLOR_HEX[c] || enSwatch(c);
+        return `<button class="chip color ${c===cSel?"on":""}" data-bc="${c}" style="--swatch:${sw}"><i class="sw"></i>${c}</button>`;
+      }).join("")}</div>`;
+    }
+    html += `<button class="btn gold" id="bpBuy" style="width:100%;margin-top:10px" ${(can&&ready)?"":"disabled"}>${!ready?(needFlavor&&!fSel?"Сначала выбери вкус":"Сначала выбери цвет"):(can?`Купить за ${p.price} ⭐`:"Не хватает бонусов")}</button>`;
+    html += `<button class="btn ghost" id="bpClose" style="width:100%;margin-top:8px">Назад</button>`;
+    $("#sheetIn").innerHTML = html;
+    document.querySelectorAll("[data-bf]").forEach(x=>x.onclick=()=>{fSel=x.dataset.bf;renderBD();});
+    document.querySelectorAll("[data-bc]").forEach(x=>x.onclick=()=>{cSel=x.dataset.bc;renderBD();});
+    $("#bpClose")?.addEventListener("click", ()=>{$("#sheet").classList.remove("open");});
+    $("#bpBuy")?.addEventListener("click", ()=>{
+      if(!can || !ready) return;
+      const order = {
+        type:"bonus",
+        items:[{id:p.id,name:p.name,brand:p.brand,cat:p.cat,flavor:fSel||"",color:cSel||"",label:[p.name,fSel,cSel].filter(Boolean).join(" · "),price:p.price,qty:1}],
+        subtotal:p.price, discount:0, deliveryFee:0, total:p.price, bonusPay:p.price,
+        deliveryType, payment, comment:"Покупка за бонусы", bonusEarn:0,
+        refer: localStorage.getItem(LS_REF)||"", from:UID
+      };
+      const hist = JSON.parse(localStorage.getItem(LS_HIST)||"[]");
+      hist.unshift({date:new Date().toLocaleString(), total:p.price, items:1, deliveryType, type:"bonus"});
+      localStorage.setItem(LS_HIST, JSON.stringify(hist.slice(0,30)));
+      localStorage.setItem(LS_BONUS, String(Math.max(0,b-p.price)));
+      $("#sheet").classList.remove("open");
+      if(tg?.sendData){ tg.sendData(JSON.stringify(order)); }
+      else { $("#sheetIn").innerHTML = `<h3>✅ Заказ за бонусы собран!</h3><pre>${JSON.stringify(order,null,2)}</pre>`; $("#sheet").classList.add("open"); }
+      renderBonus(); renderCab(); renderBottom();
+    });
+  }
+  renderBD();
+  $("#sheet").classList.add("open");
+}
+
 renderCats(); renderGrid(); renderBottom(); renderBonus();
 
 // --- темы + плавные анимации ---
