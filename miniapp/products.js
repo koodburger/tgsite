@@ -253,7 +253,7 @@ const SHOP = {
   name: "VapeOasis",
   manager: "@lzllllzll",
   bonusPercent: 2,          // % бонусами с заказа
-  referBonus: 150,          // бонус за друга (каркас, localStorage)
+  referBonus: 40,           // бонус за друга
   deliveryCourier: 300,     // курьер, руб
   deliveryFreeFrom: 3000,   // бесплатно от суммы
   payments: ["СБП", "Наличные при получении"],
