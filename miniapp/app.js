@@ -111,9 +111,12 @@ function renderCats(){
   document.querySelectorAll("[data-cat]").forEach(b=>b.onclick=()=>{activeCat=b.dataset.cat;renderCats();renderGrid();});
   document.querySelectorAll("[data-nav]").forEach(b=>b.onclick=()=>{
     document.querySelectorAll("[data-nav]").forEach(x=>x.classList.remove("active")); b.classList.add("active");
-    const shop = b.dataset.nav==="shop";
-    $("#shopView").style.display = shop?"":"none"; $("#cabView").style.display = shop?"none":"";
-    if(!shop) renderCab();
+    const v = b.dataset.nav;
+    $("#shopView").style.display = v==="shop"?"":"none";
+    $("#cabView").style.display = v==="cab"?"":"none";
+    const bv = $("#bonusView"); if(bv) bv.style.display = v==="bonus"?"":"none";
+    if(v==="cab") renderCab();
+    if(v==="bonus") renderBonus();
   });
 }
 function renderGrid(){
@@ -272,6 +275,7 @@ function sendOrder(){
 }
 
 function renderCab(){
+
   const u = tg?.initDataUnsafe?.user;
   if(u){
     const name = [u.first_name, u.last_name].filter(Boolean).join(" ") || "Без имени";
@@ -287,7 +291,34 @@ function renderCab(){
   $("#history").innerHTML = hist.length?hist.map(h=>`<div class="row"><span>${h.date}<br><small>${h.items} поз • ${h.deliveryType}</small></span><b>${money(h.total)}</b></div>`).join(""):"<p class='small'>Пока пусто.</p>";
 }
 
-renderCats(); renderGrid(); renderBottom();
+function renderBonus(){
+  const bonus = getBonus();
+  const bcount = $("#bonusCount");
+  if(bcount) bcount.textContent = `Баланс бонусов: ${bonus} ⭐`;
+  const bg = $("#bonusGrid");
+  if(!bg) return;
+  const list = PRODUCTS.slice().sort((a,b)=> (a.price-b.price));
+  bg.innerHTML = list.map(p=>{
+    const can = bonus >= p.price;
+    return `<div class="card ${can?"":"disabled"}" data-bonus="${p.id}" role="button" tabindex="${can?0:-1}">
+      ${p.photo?`<img class="ph" src="${p.photo}" alt="${p.name}" loading="lazy">`:`<div class="ph ph-${p.cat}">${catEmoji(p.cat)}</div>`}
+      <div class="b">
+        <div class="brand">${p.brand}${p.line?" • "+p.line:""}</div>
+        <div class="name">${p.name}</div>
+        <div class="meta">${p.strengthLabel!=="—"?"Крепость: "+p.strengthLabel+"<br>":""}${p.volume!=="—"?"Объём: "+p.volume:""}</div>
+        <div class="price">Цена: ${money(p.price)} • ${p.price} ⭐</div>
+        <div class="hint">${optHint(p)} ${can?"":" • не хватает бонусов"}</div>
+        <button class="add" ${can?"":"disabled"}>${can?"Купить за бонусы":"Недостаточно"}</button>
+      </div>
+    </div>`;
+  }).join("");
+  document.querySelectorAll("[data-bonus]").forEach(c=>{
+    c.addEventListener("click", ()=>openBonusDetail(c.dataset.bonus));
+    c.addEventListener("keydown", e=>{ if((e.key==="Enter"||e.key===" ") && !c.classList.contains("disabled")){ e.preventDefault(); openBonusDetail(c.dataset.bonus); }});
+  });
+}
+
+renderCats(); renderGrid(); renderBottom(); renderBonus();
 
 // --- темы + плавные анимации ---
 const THEMES = {

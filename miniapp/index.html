@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>VapeOasis — мини-приложение</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<link rel="stylesheet" href="style.css?v=20261008b">
+<link rel="stylesheet" href="style.css?v=20261008c">
 </head>
 <body>
 <div id="fx"></div>
@@ -29,6 +29,7 @@
 
 <div class="nav">
   <button class="tab active" data-nav="shop">🛍 Каталог</button>
+  <button class="tab" data-nav="bonus">⭐ За бонусы</button>
   <button class="tab" data-nav="cab">👤 Кабинет</button>
 </div>
 
@@ -51,6 +52,13 @@
   <div class="grid" id="grid"></div>
 </div>
 
+<div id="bonusView" style="display:none;padding:0 14px 120px">
+  <h3>⭐ Купить за бонусы</h3>
+  <p class="small">Выбери товар и оплати его накопленными бонусами (1 бонус = 1 ₽).</p>
+  <div class="small" style="padding:0 0 10px" id="bonusCount"></div>
+  <div class="grid" id="bonusGrid"></div>
+</div>
+
 <div id="cabView" style="display:none;padding:0 14px 120px">
   <h3>👤 Личный кабинет</h3>
   <div class="profile" id="profile">
@@ -58,11 +66,19 @@
     <div><b id="profName">Гость</b><br><span class="small" id="profSub"></span></div>
   </div>
   <div class="row"><span>⭐ Мои бонусы</span><b id="myBonus">0</b></div>
-  <div class="row"><span>🎁 Бонус за друга</span><b id="refBonus">150</b></div>
+  <div class="row"><span>🎁 Бонус за друга</span><b id="refBonus">40</b></div>
   <button class="btn gold" id="refBtn" style="width:100%;color:#1A140D">📨 Пригласить друга</button>
   <p class="small" id="refLink"></p>
   <h3>🧾 История заказов</h3>
   <div id="history"><p class="small">Пока пусто.</p></div>
+</div>
+
+<div id="bonusView" style="display:none;padding:0 14px 120px">
+  <h3>⭐ Купить за бонусы</h3>
+  <p class="small">Тут можно выбрать товар и оплатить его накопленными бонусами. Доставка и оплата — как обычно, заказ придёт владельцу.</p>
+  <div class="small" style="padding:0 0 10px" id="bonusCount"></div>
+  <div class="grid" id="bonusGrid"></div>
+  <p class="small">Обмен: 1 бонус = 1 ₽ при покупке за бонусы (уточняй у владельца при необходимости).</p>
 </div>
 
 <div class="bottom">
@@ -73,7 +89,7 @@
 
 <div class="sheet" id="sheet"><div class="in" id="sheetIn"></div></div>
 
-<script src="products.js?v=20261008b"></script>
-<script src="app.js?v=20261008b"></script>
+<script src="products.js?v=20261008c"></script>
+<script src="app.js?v=20261008c"></script>
 </body>
 </html>
