@@ -212,9 +212,8 @@ pre{white-space:pre-wrap;background:#14100A;color:#F5EDD9;padding:12px;border-ra
 [data-theme="neon"] #cabView{border-radius:18px;margin:0 6px}
 [data-theme="neon"] .small{color:#CFC7EA}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-/* ===== Единый «нуар+фонарик» стиль фото: тёмный фон, свет из товара --- 
-   Сами фото уже рендерятся 780x420 с тёмным фоном и свечением (colors_build/build_spotlight.py),
-   здесь задаём тёмную подложку и рамку/свечение выбора. */
+/* ===== Фото — прозрачные PNG: товар «парит», мягкое неоновое свечение уже впеч в картинке
+   (colors_build/build_transparent.py). Фон карточки — тёмная подложка; «коробок» нет. */
 .ph{aspect-ratio:780/420;height:auto;min-height:0;max-height:none;font-size:40px;color:#C9B8FF;
     background:radial-gradient(130% 105% at 50% 44%,#1b1336 0%,#0c0919 58%,#050409 100%)!important}
 .ph img{width:100%;height:100%;object-fit:cover;display:block}
