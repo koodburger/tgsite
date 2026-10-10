@@ -20,6 +20,8 @@ let discountPick = localStorage.getItem("vo_disc") || null; // жижа, на к
 
 const $ = s=>document.querySelector(s);
 const money = n=>n+"₽";
+const IMG_VER = "20261010d";
+const imgv = u => u ? (u.indexOf("?")>=0 ? u : u+"?v="+IMG_VER) : u;
 const byId = id=>PRODUCTS.find(p=>p.id===id);
 const catEmoji = c=>({liquids:"🧪",pods:"🔌",disposable:"💨",cartridges:"♻️",snus:"📦"}[c]||"•");
 // подбор hex-цвета для кружка: русский из COLOR_HEX, английский — по ключевым словам
@@ -140,7 +142,7 @@ function renderGrid(){
   $("#count").textContent = `Позиций: ${list.length} • ${SHOP.name} • оплата вручную через ${SHOP.manager}`;
   $("#grid").innerHTML = list.map(p=>`
     <div class="card" data-detail="${p.id}" role="button" tabindex="0">
-      ${p.photo?`<img class="ph" src="${p.photo}" alt="${p.name}" loading="lazy">`:`<div class="ph ph-${p.cat}">${catEmoji(p.cat)}</div>`}
+      ${p.photo?`<img class="ph" src="${imgv(p.photo)}" alt="${p.name}" loading="lazy">`:`<div class="ph ph-${p.cat}">${catEmoji(p.cat)}</div>`}
       <div class="b">
         <div class="brand">${p.brand}${p.line?" • "+p.line:""}</div>
         <div class="name">${p.name}</div>
@@ -173,7 +175,7 @@ function renderDetail(){
   const price = priceOf(p, fSel) * det.qty;
   const cp = (typeof COLOR_PHOTOS!=="undefined" && COLOR_PHOTOS[p.id]) || {};
   const photo = (cSel && cp[cSel]) || p.photo;
-  let html = photo?`<img class="det-ph" src="${photo}" alt="${p.name}">`:"";
+  let html = photo?`<img class="det-ph" src="${imgv(photo)}" alt="${p.name}">`:"";
   html += `<h3>${catEmoji(p.cat)} ${p.name}</h3>`;
   html += `<p class="small">${p.desc||""}</p>`;
   html += `<div class="row"><span>Бренд</span><b>${p.brand}</b></div>`;
@@ -316,7 +318,7 @@ function renderBonus(){
   bg.innerHTML = list.map(p=>{
     const can = bonus >= p.price;
     return `<div class="card ${can?"":"disabled"}" data-bonus="${p.id}" role="button" tabindex="${can?0:-1}">
-      ${p.photo?`<img class="ph" src="${p.photo}" alt="${p.name}" loading="lazy">`:`<div class="ph ph-${p.cat}">${catEmoji(p.cat)}</div>`}
+      ${p.photo?`<img class="ph" src="${imgv(p.photo)}" alt="${p.name}" loading="lazy">`:`<div class="ph ph-${p.cat}">${catEmoji(p.cat)}</div>`}
       <div class="b">
         <div class="brand">${p.brand}${p.line?" • "+p.line:""}</div>
         <div class="name">${p.name}</div>
@@ -344,7 +346,7 @@ function openBonusDetail(id){
     const ready = (!needFlavor || fSel) && (!needColor || cSel);
     const photo = (cSel && cp[cSel]) || p.photo;
     let html = `<h3>⭐ Купить за бонусы</h3>`;
-    if(photo) html += `<img class="det-ph" src="${photo}" alt="${p.name}">`;
+    if(photo) html += `<img class="det-ph" src="${imgv(photo)}" alt="${p.name}">`;
     html += `<h3>${catEmoji(p.cat)} ${p.name}</h3>`;
     html += `<p class="small">${p.desc||""}</p>`;
     html += `<div class="row"><span>Цена</span><b>${money(p.price)} • ${p.price} ⭐</b></div>`;
