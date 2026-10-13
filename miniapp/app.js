@@ -1,4 +1,4 @@
-const tg = window.Telegram?.WebApp; tg?.expand?.();
+﻿const tg = window.Telegram?.WebApp; tg?.expand?.();
 const UID = tg?.initDataUnsafe?.user?.id || "guest";
 const START_PARAM = tg?.initDataUnsafe?.start_param || new URLSearchParams(location.search).get("startapp") || "";
 
@@ -20,7 +20,7 @@ let discountPick = localStorage.getItem("vo_disc") || null; // жижа, на к
 
 const $ = s=>document.querySelector(s);
 const money = n=>n+"₽";
-const IMG_VER = "20261012c";
+const IMG_VER = "20261013a";
 const imgv = u => u ? (u.indexOf("?")>=0 ? u : u+"?v="+IMG_VER) : u;
 const byId = id=>PRODUCTS.find(p=>p.id===id);
 const catEmoji = c=>({liquids:"🧪",pods:"🔌",disposable:"💨",cartridges:"♻️",snus:"📦"}[c]||"•");
