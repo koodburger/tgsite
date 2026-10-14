@@ -323,7 +323,7 @@ const SHOP = {
   bonusPercent: 2,          // % бонусами с заказа
   referBonus: 40,           // бонус за друга
   deliveryCourier: 300,     // курьер, руб
-  deliveryFreeFrom: 3000,   // бесплатно от суммы
+  deliveryFreeFrom: 2000,   // бесплатно от суммы
   payments: ["СБП", "Наличные при получении"],
   deliveryTypes: ["Самовывоз", "Курьер"]
 };
