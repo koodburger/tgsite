@@ -322,7 +322,7 @@ const SHOP = {
   manager: "@lzllllzll",
   bonusPercent: 2,          // % бонусами с заказа
   referBonus: 40,           // бонус за друга
-  deliveryCourier: 300,     // курьер, руб
+  deliveryCourier: 100,     // курьер, руб (минимум, «от»)
   deliveryFreeFrom: 2000,   // бесплатно от суммы
   payments: ["СБП", "Наличные при получении"],
   deliveryTypes: ["Самовывоз", "Курьер"]

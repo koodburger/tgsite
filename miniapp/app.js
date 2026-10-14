@@ -20,7 +20,7 @@ let discountPick = localStorage.getItem("vo_disc") || null; // жижа, на к
 
 const $ = s=>document.querySelector(s);
 const money = n=>n+"₽";
-const IMG_VER = "20261013k";
+const IMG_VER = "20261013l";
 const imgv = u => u ? (u.indexOf("?")>=0 ? u : u+"?v="+IMG_VER) : u;
 const byId = id=>PRODUCTS.find(p=>p.id===id);
 const catEmoji = c=>({liquids:"🧪",pods:"🔌",disposable:"💨",cartridges:"♻️",snus:"📦"}[c]||"•");
@@ -242,7 +242,7 @@ function renderSheet(){
   }
   else if(hasPod) html += `<div class="promo">🎁 Добавь жижу — на неё будет скидка <b>−50%</b></div>`;
   else if(hasLiquid) html += `<div class="promo">🎁 Добавь под (вейп) — на жижу будет скидка <b>−50%</b></div>`;
-  html += `<h4>Доставка</h4><div class="seg">${SHOP.deliveryTypes.map(t=>`<button class="${t===deliveryType?'on':''}" data-dt="${t}">${t}${t==="Курьер"?` ${money(SHOP.deliveryCourier)}`:" • 0₽"}</button>`).join("")}</div>
+  html += `<h4>Доставка</h4><div class="seg">${SHOP.deliveryTypes.map(t=>`<button class="${t===deliveryType?'on':''}" data-dt="${t}">${t}${t==="Курьер"?` от ${money(SHOP.deliveryCourier)}`:" • 0₽"}</button>`).join("")}</div>
   <div class="small">Курьер бесплатно от ${money(SHOP.deliveryFreeFrom)}. Сейчас: ${money(fee)}</div>
   <h4>Оплата (вручную)</h4><div class="seg">${SHOP.payments.map(t=>`<button class="${t===payment?'on':''}" data-pay="${t}">${t}</button>`).join("")}</div>
   <div class="small">Доставка и оплата товара заказанного вами будет на месте, то есть договорно в ЛС. Заказ отдается при встрече. Напиши ему: ${SHOP.manager}</div>
