@@ -20,7 +20,7 @@ let discountPick = localStorage.getItem("vo_disc") || null; // жижа, на к
 
 const $ = s=>document.querySelector(s);
 const money = n=>n+"₽";
-const IMG_VER = "20261013m";
+const IMG_VER = "20261013n";
 const imgv = u => u ? (u.indexOf("?")>=0 ? u : u+"?v="+IMG_VER) : u;
 const byId = id=>PRODUCTS.find(p=>p.id===id);
 const catEmoji = c=>({liquids:"🧪",pods:"🔌",disposable:"💨",cartridges:"♻️",snus:"📦"}[c]||"•");
@@ -63,6 +63,13 @@ function minPrice(p){ return p.flavors? Math.min(...p.flavors.map(f=>f.price||p.
 function priceText(p){
   if(p.flavors && p.flavors.some(f=>f.price && f.price!==p.price)) return "от "+money(minPrice(p));
   return money(p.price);
+}
+// скидка: старая цена зачёркнута + процент (поле oldPrice в каталоге)
+function salePct(p){ return (p.oldPrice && p.oldPrice>p.price)? Math.round((1-p.price/p.oldPrice)*100) : 0; }
+function priceHtml(p){
+  const pct = salePct(p);
+  if(!pct) return priceText(p);
+  return `<s class="old">${money(p.oldPrice)}</s> ${priceText(p)} <span class="sale">−${pct}%</span>`;
 }
 function optHint(p){ if(p.flavors) return p.flavors.length+" вкусов"; if(p.colors) return p.colors.length+" цветов"; return ""; }
 
@@ -147,9 +154,9 @@ function renderGrid(){
         <div class="brand">${p.brand}${p.line?" • "+p.line:""}</div>
         <div class="name">${p.name}</div>
         <div class="meta">${p.strengthLabel!=="—"?"Крепость: "+p.strengthLabel+"<br>":""}${p.volume!=="—"?"Объём: "+p.volume:""}</div>
-        <div class="price">${priceText(p)}</div>
-        <div class="hint">${optHint(p)}</div>
-        <button class="add">Выбрать</button>
+        <div class="price">${priceHtml(p)}</div>
+        <div class="hint">${p.off?'<span class="off">нет в наличии</span>':optHint(p)}</div>
+        <button class="add" ${p.off?"disabled":""}>${p.off?"Нет в наличии":"Выбрать"}</button>
       </div>
     </div>`).join("");
   document.querySelectorAll("[data-detail]").forEach(c=>{
@@ -197,16 +204,20 @@ function renderDetail(){
   html += `<div class="row"><span>Итого</span><b id="detPrice">${money(price)}</b></div>`;
   if(p.cat==="pods") html += `<div class="promo">🎁 Возьми жижу к этому поду — на неё скидка <b>−50%</b></div>`;
   if(p.cat==="liquids") html += `<div class="promo">🎁 Добавь под в корзину — на эту жижу будет скидка <b>−50%</b></div>`;
-  const btnText = !ready
-    ? (needFlavor && !fSel ? "Сначала выбери "+(p.vlabel||"вкус").toLowerCase() : "Сначала выбери цвет")
-    : `В корзину • ${money(price)}`;
-  html += `<button class="btn gold" id="detAdd" style="width:100%;margin-top:10px" ${ready?"":"disabled"}>${btnText}</button>`;
+  if(p.off) html += `<div class="promo off">Сейчас нет в наличии — спроси у ${SHOP.manager}</div>`;
+  const btnText = p.off
+    ? "Нет в наличии"
+    : !ready
+      ? (needFlavor && !fSel ? "Сначала выбери "+(p.vlabel||"вкус").toLowerCase() : "Сначала выбери цвет")
+      : `В корзину • ${money(price)}`;
+  html += `<button class="btn gold" id="detAdd" style="width:100%;margin-top:10px" ${ready&&!p.off?"":"disabled"}>${btnText}</button>`;
   $("#sheetIn").innerHTML = html;
   document.querySelectorAll("[data-flavor]").forEach(b=>b.onclick=()=>{det.flavor=b.dataset.flavor;renderDetail();});
   document.querySelectorAll("[data-color]").forEach(b=>b.onclick=()=>{det.color=b.dataset.color;renderDetail();});
   document.querySelectorAll("[data-iq]").forEach(b=>b.onclick=()=>{det.qty++;renderDetail();});
   document.querySelectorAll("[data-dq]").forEach(b=>b.onclick=()=>{if(det.qty>1)det.qty--;renderDetail();});
   $("#detAdd")?.addEventListener("click", ()=>{
+    if(p.off){ tg?.HapticFeedback?.notificationOccurred?.("error"); return; }
     const key = itemKey(p, det.flavor, det.color);
     cart[key] = (cart[key]||0) + det.qty;
     saveCart(); renderGrid();

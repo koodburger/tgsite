@@ -108,6 +108,11 @@ a{color:inherit}
 .name{font-size:14px;font-weight:700;line-height:1.25;min-height:34px}
 .meta{font-size:12px;color:var(--muted)}
 .price{font-size:18px;font-weight:800}
+.price s.old{font-size:13px;font-weight:600;color:var(--muted);margin-right:2px}
+.sale{display:inline-block;background:#E5484D;color:#fff;border-radius:8px;padding:1px 6px;font-size:12px;font-weight:900;vertical-align:2px}
+.off{color:#E5484D}
+.promo.off{border-color:#E5484D;background:linear-gradient(135deg,color-mix(in srgb,#E5484D 18%,transparent),color-mix(in srgb,#E5484D 5%,transparent))}
+.add[disabled]{opacity:.55;cursor:default}
 .hint{font-size:11px;color:var(--accent);font-weight:800;text-transform:uppercase;letter-spacing:.4px}
 .promo{margin:12px 0;padding:11px 13px;border-radius:12px;border:1px dashed var(--accent);background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 18%,transparent),color-mix(in srgb,var(--accent) 5%,transparent));color:var(--ink);font-size:12.5px;font-weight:700;line-height:1.45}
 .promo b{color:var(--accent)}
