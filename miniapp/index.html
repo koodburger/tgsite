@@ -3,11 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<script>/* 18+: классы ставим до первой отрисовки, чтобы не было мигания */
+try{
+  if(localStorage.getItem("vo_adult")==="1") document.documentElement.classList.add("adult-ok");
+  else document.documentElement.classList.add("gate-lock");
+}catch(e){ document.documentElement.classList.add("gate-lock"); }
+</script>
 <title>VapeOasis — мини-приложение</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<link rel="stylesheet" href="style.css?v=20261013n">
+<link rel="stylesheet" href="style.css?v=20261013o">
 </head>
 <body>
+<!-- ---------- 18+ ворота ---------- -->
+<div class="gate" id="ageGate" role="dialog" aria-modal="true">
+  <div class="gateCard" id="gateCard">
+    <div class="gateEmoji">🔞</div>
+    <h2>Вам есть 18 лет?</h2>
+    <p>Мы продаём никотиносодержащую продукцию. Доступ к магазину разрешён только лицам, достигшим 18 лет.</p>
+    <div class="gateBtns">
+      <button class="btn gold" id="gateYes">Да, мне 18+</button>
+      <button class="btn gate-no" id="gateNo">Нет, мне меньше 18</button>
+    </div>
+    <p class="gateNote">Нажимая «Да», вы подтверждаете своё совершеннолетие.</p>
+  </div>
+</div>
+
 <div id="fx"></div>
 <div class="header">
   <img src="logo.svg" alt="VapeOasis">
@@ -82,7 +102,7 @@
 
 <div class="sheet" id="sheet"><div class="in" id="sheetIn"></div></div>
 
-<script src="products.js?v=20261013n"></script>
-<script src="app.js?v=20261013n"></script>
+<script src="products.js?v=20261013o"></script>
+<script src="app.js?v=20261013o"></script>
 </body>
 </html>

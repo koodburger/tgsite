@@ -233,3 +233,20 @@ img.ph{width:100%;object-fit:cover;display:block;background:transparent!importan
 .chip.on{box-shadow:0 0 18px color-mix(in srgb,var(--accent) 55%,transparent),0 4px 12px rgba(0,0,0,.3)}
 .card:hover .det-ph,.card:hover .ph{filter:brightness(1.08)}
 
+/* ---------- 18+ ворота ---------- */
+.gate{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:22px;
+  background:rgba(8,6,3,.74);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
+html.adult-ok .gate{display:none}
+html.gate-lock,html.gate-lock body{overflow:hidden;height:100%}
+.gateCard{width:100%;max-width:360px;background:var(--bg2);color:var(--ink);border:1px solid var(--line);
+  border-radius:var(--radius);padding:22px 18px 18px;text-align:center;box-shadow:0 26px 70px rgba(0,0,0,.5);
+  animation:gateIn .4s both}
+@keyframes gateIn{from{opacity:0;transform:translateY(16px) scale(.96)}to{opacity:1;transform:none}}
+.gateEmoji{font-size:46px;line-height:1}
+.gateCard h2{margin:10px 0 8px;font-size:21px}
+.gateCard p{margin:0 0 16px;font-size:13.5px;color:var(--muted);line-height:1.5}
+.gateBtns{display:flex;flex-direction:column;gap:8px}
+.gateBtns .btn{width:100%}
+.gate-no{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.gateNote{margin:14px 0 0!important;font-size:11px!important;opacity:.75}
+

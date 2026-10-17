@@ -2,7 +2,7 @@
 const UID = tg?.initDataUnsafe?.user?.id || "guest";
 const START_PARAM = tg?.initDataUnsafe?.start_param || new URLSearchParams(location.search).get("startapp") || "";
 
-const LS_CART="vo_cart", LS_BONUS="vo_bonus", LS_HIST="vo_hist", LS_REF="vo_ref_done", LS_BONUS_EXP="vo_bonus_exp";
+const LS_CART="vo_cart", LS_BONUS="vo_bonus", LS_HIST="vo_hist", LS_REF="vo_ref_done", LS_BONUS_EXP="vo_bonus_exp", LS_ADULT="vo_adult";
 let cart = JSON.parse(localStorage.getItem(LS_CART)||"{}");
 // чистка: отбрасываем ключи от старой версии каталога / битые записи
 (function(){
@@ -20,7 +20,7 @@ let discountPick = localStorage.getItem("vo_disc") || null; // жижа, на к
 
 const $ = s=>document.querySelector(s);
 const money = n=>n+"₽";
-const IMG_VER = "20261013n";
+const IMG_VER = "20261013o";
 const imgv = u => u ? (u.indexOf("?")>=0 ? u : u+"?v="+IMG_VER) : u;
 const byId = id=>PRODUCTS.find(p=>p.id===id);
 const catEmoji = c=>({liquids:"🧪",pods:"🔌",disposable:"💨",cartridges:"♻️",snus:"📦"}[c]||"•");
@@ -404,7 +404,29 @@ function openBonusDetail(id){
   $("#sheet").classList.add("open");
 }
 
-renderCats(); renderGrid(); renderBottom(); renderBonus();
+// --- 18+ ворота ---
+function gatePass(){                       // «Да, мне 18+»
+  try{ localStorage.setItem(LS_ADULT,"1"); }catch(e){}
+  document.documentElement.classList.add("adult-ok");
+  document.documentElement.classList.remove("gate-lock");
+  tg?.HapticFeedback?.notificationOccurred?.("success");
+  renderCats(); renderGrid(); renderBottom(); renderBonus();
+}
+function gateDeny(){                       // «Нет, мне меньше 18»
+  const card = $("#gateCard"); if(!card) return;
+  document.getElementById("ageGate").classList.add("blocked");
+  tg?.HapticFeedback?.notificationOccurred?.("error");
+  card.innerHTML = `
+    <div class="gateEmoji">🚫</div>
+    <h2>Доступ только для 18+</h2>
+    <p>Продажа никотиносодержащей продукции лицам младше 18 лет запрещена.<br>Возвращайтесь, когда исполнится 18.</p>
+    <div class="gateBtns"><button class="btn gold" id="gateClose">Понятно</button></div>`;
+  card.querySelector("#gateClose").onclick = ()=>{ try{ tg?.close?.(); }catch(e){} };
+}
+$("#gateYes").onclick = gatePass;
+$("#gateNo").onclick = gateDeny;
+
+if(document.documentElement.classList.contains("adult-ok")){ renderCats(); renderGrid(); renderBottom(); renderBonus(); }
 
 // --- темы + плавные анимации ---
 const THEMES = {
