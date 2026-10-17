@@ -20,7 +20,7 @@ let discountPick = localStorage.getItem("vo_disc") || null; // жижа, на к
 
 const $ = s=>document.querySelector(s);
 const money = n=>n+"₽";
-const IMG_VER = "20261013o";
+const IMG_VER = "20261013p";
 const imgv = u => u ? (u.indexOf("?")>=0 ? u : u+"?v="+IMG_VER) : u;
 const byId = id=>PRODUCTS.find(p=>p.id===id);
 const catEmoji = c=>({liquids:"🧪",pods:"🔌",disposable:"💨",cartridges:"♻️",snus:"📦"}[c]||"•");
@@ -430,17 +430,13 @@ if(document.documentElement.classList.contains("adult-ok")){ renderCats(); rende
 
 // --- темы + плавные анимации ---
 const THEMES = {
-  oasis:   {deco:"<b>🏝️ Оазис</b> — фирменный стиль VapeOasis"},
-  glacier: {deco:"<b class='shimmer'>❄️ Ледник</b> — свежо и красиво 🏔️✨"},
-  flame:   {deco:"<b>🔥 Пламя</b> — ярко и дерзко"},
-  forest:  {deco:"<b>🌲 Лес</b> — спокойно и зелено"},
-  neon:    {deco:"<b>🌌 Нуар</b> — фото на фоне и неоновый фиолет 💜"}
+  neon:    {deco:"<b>🌌 Нуар</b> — фото на фоне и неоновый фиолет 💜"},
+  flame:   {deco:"<b>🔥 Пламя</b> — ярко и дерзко"}
 };
-const FX = {oasis:[], glacier:["❄","❅","❆","💎","✨"], flame:["🔥","✨","💥"], forest:["🍃","🌿","💧"], neon:["✨","⚡","💜","🌟"]};
+const FX = {flame:["🔥","✨","💥"], neon:["✨","⚡","💜","🌟"]};
 function applyTheme(name, save=true){
-  if(!THEMES[name]) name="oasis";
-  document.documentElement.dataset.theme = name==="oasis"?"":name;
-  if(name==="oasis") document.documentElement.removeAttribute("data-theme");
+  if(!THEMES[name]) name="neon";
+  document.documentElement.dataset.theme = name;
   if(save) localStorage.setItem("vo_theme", name);
   document.querySelectorAll(".theme-btn").forEach(b=>b.classList.toggle("on", b.dataset.theme===name));
   $("#themeDeco").innerHTML = THEMES[name].deco;

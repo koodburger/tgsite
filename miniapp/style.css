@@ -1,16 +1,11 @@
-/* VapeOasis themes: oasis (default) / glacier / flame / forest + smooth animations */
-:root{
-  --bg:#E9DCC3; --bg2:#F5EDD9; --card:#FFFDF6; --ink:#1A140D;
-  --muted:#7A6F5C; --gold:#B98A2F; --gold2:#8C6517; --line:#E2D5B8;
+/* VapeOasis: две темы — «🌌 Нуар» (по умолчанию) и «🔥 Пламя» */
+:root{            /* база = палитра «Нуар», чтобы первый кадр был сразу тёмным */
+  --bg:#0A0812; --bg2:rgba(16,13,26,.95); --card:rgba(24,19,38,.74);
+  --ink:#F4F0FF; --muted:#CFC7EA; --gold:#A855F7; --gold2:#C9B8FF;
+  --line:rgba(168,85,247,.38);
   --green:#2E7D4F; --red:#B23B3B; --radius:16px;
-  --hdr1:#14100A; --hdr2:#241B0E; --hdrInk:#F5EDD9;
-  --btnBg:#1A140D; --btnInk:#F5EDD9; --accent:#B98A2F;
-}
-[data-theme="glacier"]{
-  --bg:#DFF2FB; --bg2:#F2FBFF; --card:rgba(255,255,255,.82); --ink:#0B2233;
-  --muted:#5B7A90; --gold:#39B6E8; --gold2:#0E7FBF; --line:#BEE6F7;
-  --hdr1:#0B2A44; --hdr2:#155E8A; --hdrInk:#EAF9FF;
-  --btnBg:#0E7FBF; --btnInk:#fff; --accent:#39B6E8;
+  --hdr1:rgba(10,8,16,.88); --hdr2:#2B1650; --hdrInk:#F4F0FF;
+  --btnBg:#7C3AED; --btnInk:#fff; --accent:#A855F7;
 }
 [data-theme="flame"]{
   --bg:#2A1410; --bg2:#402216; --card:#4E2C1C; --ink:#FFF3E6;
@@ -18,27 +13,11 @@
   --hdr1:#1A0B06; --hdr2:#7A2408; --hdrInk:#FFE9D6;
   --btnBg:#C24E14; --btnInk:#fff; --accent:#FF8A3D;
 }
-[data-theme="forest"]{
-  --bg:#DDEBD5; --bg2:#F0F7E9; --card:#F6FBF1; --ink:#14240F;
-  --muted:#5F7A52; --gold:#4E9B47; --gold2:#2E7D32; --line:#C4DDB6;
-  --hdr1:#0E2010; --hdr2:#2E5B2E; --hdrInk:#EAF7E4;
-  --btnBg:#2E7D32; --btnInk:#fff; --accent:#4E9B47;
-}
-/* «Нуар» — фоновое фото + фиолетовый неон, всё читается поверх картинки */
-[data-theme="neon"]{
-  --bg:#0A0812; --bg2:rgba(16,13,26,.95); --card:rgba(24,19,38,.74);
-  --ink:#F4F0FF; --muted:#CFC7EA; --gold:#A855F7; --gold2:#C9B8FF;
-  --line:rgba(168,85,247,.38);
-  --hdr1:rgba(10,8,16,.88); --hdr2:#2B1650; --hdrInk:#F4F0FF;
-  --btnBg:#7C3AED; --btnInk:#fff; --accent:#A855F7;
-}
 *{box-sizing:border-box;transition:background-color .35s ease,color .35s ease,border-color .35s ease}
 body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--ink);min-height:100vh}
 /* фоны тем — плоские, без «ИИ-градиентов» */
 body{background:var(--bg)}
-[data-theme="glacier"] body{background:#E3F2FA}
 [data-theme="flame"] body{background:#241210}
-[data-theme="forest"] body{background:#D8E8CF}
 /* фон-фото темы «Нуар»: fixed-слой + затемняющая вуаль, чтобы кнопки были видны */
 html[data-theme="neon"]{background:#05040A}
 html[data-theme="neon"] body{background:transparent}
@@ -61,18 +40,13 @@ a{color:inherit}
 @keyframes fall{to{transform:translateY(110vh) rotate(340deg)}}
 /* pretty theme banner */
 .deco{margin:10px 12px 0;padding:12px 14px;border-radius:16px;font-size:14px;line-height:1.45;border:1px solid var(--line);background:var(--card);animation:cardIn .5s both;box-shadow:0 6px 20px rgba(0,0,0,.08)}
-[data-theme="glacier"] .deco{background:#fff;border:1px solid #BEE6F7;box-shadow:0 2px 10px rgba(14,127,191,.12)}
 .deco b{font-size:15px}
-.deco .shimmer{color:var(--gold2)}
 .htitle{flex:1}
 /* кружки тем справа — компактно */
-.theme-dots{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.theme-dots{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
 .theme-btn{width:34px;height:34px;border-radius:50%;border:2px solid rgba(255,255,255,.55);font-size:15px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
 .theme-btn.on{border-color:#fff;box-shadow:0 0 0 2px var(--accent),0 0 12px var(--accent);transform:scale(1.12)}
-.dot-oasis{background:linear-gradient(135deg,#E9DCC3,#B98A2F)}
-.dot-glacier{background:linear-gradient(135deg,#BEE6F7,#39D6E8)}
 .dot-flame{background:linear-gradient(135deg,#7A2408,#FF8A3D)}
-.dot-forest{background:linear-gradient(135deg,#1E5B25,#7CC47C)}
 .dot-neon{background:linear-gradient(135deg,#2E1065,#A855F7)}
 /* шаги-подсказка */
 .steps{display:flex;gap:6px;align-items:center;justify-content:center;padding:10px 12px 0;font-size:12px;color:var(--muted)}
@@ -88,7 +62,6 @@ a{color:inherit}
 @media(min-width:1024px){.grid{grid-template-columns:repeat(4,1fr)}}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;animation:cardIn .45s both;transition:transform .25s,box-shadow .25s}
 .card:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(0,0,0,.14)}
-[data-theme="glacier"] .card{box-shadow:0 2px 10px rgba(14,127,191,.12)}
 @keyframes cardIn{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
 .grid .card:nth-child(3n){animation-delay:.05s}.grid .card:nth-child(3n+1){animation-delay:.1s}
 /* фото-заглушка: фиксированная высота, плоский цвет по категории */
@@ -100,9 +73,7 @@ a{color:inherit}
 .ph-disposable{background:#F0E4D6}
 .ph-cartridges{background:#E4E7E4}
 .ph-snus{background:#EAE0E8}
-[data-theme="glacier"] .ph-liquids{background:#CFEAF7}[data-theme="glacier"] .ph-pods{background:#D8E6F2}[data-theme="glacier"] .ph-disposable{background:#D9F0F0}[data-theme="glacier"] .ph-cartridges{background:#D5E9E4}[data-theme="glacier"] .ph-snus{background:#E2DFF2}
-[data-theme="flame"] .ph{background:#5A2E1C}[data-theme="forest"] .ph{background:#CFE0C2}
-[data-theme="forest"] .ph-liquids{background:#C4DDB6}[data-theme="forest"] .ph-pods{background:#BFD4B4}
+[data-theme="flame"] .ph{background:#5A2E1C}
 .card .b{padding:10px;display:flex;flex-direction:column;gap:6px;flex:1}
 .brand{font-size:11px;color:var(--gold2);text-transform:uppercase;letter-spacing:.6px;font-weight:700}
 .name{font-size:14px;font-weight:700;line-height:1.25;min-height:34px}
@@ -125,9 +96,7 @@ a{color:inherit}
 .btn{border:0;border-radius:12px;padding:12px 14px;font-weight:800;cursor:pointer;font-size:14px;transition:transform .15s}
 .btn:active{transform:scale(.96)}
 .btn.gold{background:var(--accent);color:#1A140D}
-[data-theme="glacier"] .btn.gold{background:#0E7FBF;color:#fff}
 [data-theme="flame"] .btn.gold{background:#E8641F;color:#fff}
-[data-theme="forest"] .btn.gold{background:#2E7D32;color:#fff}
 .btn.ghost{background:transparent;color:inherit;border:1px solid var(--accent)}
 .sheet{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;z-index:10}
 .sheet.open{display:flex;animation:fade .25s}
